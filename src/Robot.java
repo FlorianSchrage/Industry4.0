@@ -469,24 +469,17 @@ public class Robot {
 			restartCommunication();
 		}
 		else{
-			JsonReader jsonReader = Json.createReader(new StringReader(json));
-			JsonObject json_allRobots = jsonReader.readObject();
-			jsonReader.close();
-			
-			JsonObject json_thisRobot = json_allRobots.getJsonObject("Robot_" + getID());
-			String json_thisRobot_String = json_thisRobot.toString();
-			
 			String action = "";
 			
 			for(int i=0; i<actions.length; i++){
-				if(json_thisRobot_String.contains(actions[i])){
+				if(json.contains(actions[i])){
 					action = actions[i];
 				}
 			}
 			
 			int number = -1;
 			if(action == "MOVE_TO_BUILDING_SITE" || action == "MOVE_TO_STORAGE_LOCATION" || action == "MOVE_TO_BUIDING_POSITION"){
-				number = Integer.valueOf(json_thisRobot_String.replaceAll("[^0-9]+", " "));
+				number = Integer.valueOf(json.replaceAll("[^0-9]+", " "));
 			}
 			
 			switch(action){
