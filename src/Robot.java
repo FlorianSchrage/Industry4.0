@@ -19,10 +19,6 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
-import net.maritimecloud.internal.core.javax.json.Json;
-import net.maritimecloud.internal.core.javax.json.JsonBuilderFactory;
-import net.maritimecloud.internal.core.javax.json.JsonObject;
-import net.maritimecloud.internal.core.javax.json.JsonReader;
 
 public class Robot {
 	
