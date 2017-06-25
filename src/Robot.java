@@ -456,15 +456,8 @@ public class Robot {
 	// ----- JSON Methods -----
 	
 	public String getJsonString(){
-		JsonBuilderFactory factory = Json.createBuilderFactory(null);
-		JsonObject value = factory.createObjectBuilder()
-				 .add("Robot_" + getID(), factory.createObjectBuilder()
-				         .add("POSITION", getPosition())
-				         .add("COLOR", getCurrentBrickColor())
-				         .add("STATUS", getCurrentStatus()))
-				 .build();
-		
-		return value.toString();
+		String json = "{\"Robot_" + getID() + "\":{\"POSITION\":\"" + getPosition() + "\",\"COLOR\":\"" + getCurrentBrickColor() + "\",\"STATUS\":\"" + getCurrentStatus() + "\"}}";		
+		return json;
 	}
 	
 	public void interpretJsonString(String json){
