@@ -97,14 +97,14 @@ public class Robot {
 	private final SampleProvider provider_color_initialize = sensor_color_initialize.getColorIDMode();
 	private float[] sample_color_initialize = new float[provider_color_initialize.sampleSize()];
 	
+	public static final String HOST = "192.168.1.10";
 	
 	private static final boolean DEBUG_MODE = true;
-	private static final String HOST = "192.168.1.10";
-	private static final int PORT = 12345;
+//	private static final int PORT = 12345;
 	
 	private SenderThread sender;
 	private ReceiverThread receiver;
-	private Socket socket;
+//	private Socket socket;
 	
 	public static void main(String[] args) {
 		
@@ -180,7 +180,7 @@ public class Robot {
 	
 	private void moveToCoordinate(float coord){
 		float currentCoord;
-		if(position == "RIGHT"){
+		if(position == "LEFT"){
 			while(true){
 				currentCoord = getLeftRightDistance();
 				if(Math.round(currentCoord*100 - coord*100) > 0){
@@ -198,7 +198,7 @@ public class Robot {
 				}
 			}
 		}
-		else if(position == "LEFT"){
+		else if(position == "RIGHT"){
 			while(true){
 				currentCoord = getLeftRightDistance();
 				if(Math.round(currentCoord*100 - coord*100) > 0){
@@ -495,26 +495,26 @@ public class Robot {
 		}
 	}
 	
-	public Socket getSocket()
-	{
-		if(socket == null || socket.isClosed() || !socket.isConnected())
-		{
-			LCD.drawString("New Socket created", 1, 1);
-			
-			try
-			{
-				socket = new Socket(HOST, PORT);
-			} catch (UnknownHostException e)
-			{
-				e.printStackTrace();
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		
-		return socket;
-	}
+//	public Socket getSocket()
+//	{
+//		if(socket == null || socket.isClosed() || !socket.isConnected())
+//		{
+//			LCD.drawString("New Socket created", 1, 1);
+//			
+//			try
+//			{
+//				socket = new Socket(HOST, PORT);
+//			} catch (UnknownHostException e)
+//			{
+//				e.printStackTrace();
+//			} catch (IOException e)
+//			{
+//				e.printStackTrace();
+//			}
+//		}
+//		
+//		return socket;
+//	}
 
 	public void print(String message)
 	{

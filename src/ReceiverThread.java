@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Semaphore;
 
@@ -10,17 +11,25 @@ public class ReceiverThread extends Thread
 	private Robot apiRef;
 	private Semaphore sema;
 	private Socket socket;
+	private ServerSocket server;
 	private BufferedReader networkIn;
+	private static final int PORT = 33333;
 	
 	public ReceiverThread(Robot apiRef, Semaphore sema)
 	{
 		this.apiRef = apiRef;
 		this.sema = sema;
+		try {
+			server = new ServerSocket(PORT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void terminate()
 	{
 		running = false;
+		try{ server.close(); } catch(Exception e) {}
 	}
 	
 	public void run()
@@ -29,31 +38,26 @@ public class ReceiverThread extends Thread
 		{
 			try
 			{
-				sema.acquire();
-			} catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-			
-			apiRef.print("Receiver aquired");
-			Socket newSocket = apiRef.getSocket();
-//			Socket newSocket= dummyGetSocket();
-
-			try
-			{
-				if(newSocket != socket)
-				{
-					apiRef.print("Receiver new Socket");
-					socket = newSocket;
-					networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				}
-
+				apiRef.print("Receiver starting");
+				socket = server.accept();
+				networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				apiRef.print("Socket (R) opened");
+				
 				apiRef.print("Checking for Data");
 				if(networkIn.ready())
 				{
 					String line = networkIn.readLine();
 					apiRef.print("Received " + line);
+					
+					try
+					{
+						sema.acquire();
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
 					apiRef.interpretJsonString(line);
+					sema.release();
 				}
 
 			} catch(IOException e)
@@ -62,31 +66,9 @@ public class ReceiverThread extends Thread
 			}
 			finally
 			{
-				sema.release();
+				try{ socket.close(); } catch(Exception e) {}
+				try{ networkIn.close(); } catch(Exception e) {}
 			}
 		}
 	}
-	
-	
-//	public Socket dummyGetSocket()
-//	{
-//		if(socket == null || socket.isClosed() || !socket.isConnected())
-//		{			
-//			try
-//			{
-//				socket = new Socket("192.168.1.10", 33333);
-//				apiRef.print("Socket 33333 successful");
-//			} catch (UnknownHostException e)
-//			{
-//				apiRef.print("E: unknown host");
-//				e.printStackTrace();
-//			} catch (IOException e)
-//			{
-//				apiRef.print(e.getMessage());
-//				e.printStackTrace();
-//			}
-//		}
-//		
-//		return socket;
-//	}
 }

@@ -10,6 +10,7 @@ public class SenderThread extends Thread
 	private Semaphore sema;
 	private Socket socket;
 	private PrintWriter networkOut;
+	private static final int PORT = 22222;
 	
 	public SenderThread(Robot apiRef, Semaphore sema)
 	{
@@ -28,27 +29,25 @@ public class SenderThread extends Thread
 		{
 			try
 			{
-				sema.acquire();
-			} catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
+				apiRef.print("Sender starting");
+				socket = new Socket(Robot.HOST, PORT);
+				networkOut = new PrintWriter(socket.getOutputStream());
+				apiRef.print("Socket (S) opened");	
 			
-			apiRef.print("Sender aquired");
-			Socket newSocket = apiRef.getSocket();
-
-			try
-			{
-				if(newSocket != socket)
+				try
 				{
-					apiRef.print("Sender new Socket");
-					socket = newSocket;
-					networkOut = new PrintWriter(socket.getOutputStream());
+					sema.acquire();
+				} catch (InterruptedException e)
+				{
+					e.printStackTrace();
 				}
-
-				apiRef.print("Sending " + apiRef.getJsonString());
-				networkOut.println(apiRef.getJsonString());
+				String jsonData = apiRef.getJsonString();
+				sema.release();
+				
+				apiRef.print("Sending " + jsonData);
+				networkOut.println(jsonData);
 				networkOut.flush();
+				sema.release();
 
 			} catch(IOException e)
 			{
@@ -56,7 +55,8 @@ public class SenderThread extends Thread
 			}
 			finally
 			{
-				sema.release();
+				try{ socket.close(); } catch(Exception e) {}
+				try{ networkOut.close(); } catch(Exception e) {}
 			}
 			
 			try
