@@ -62,8 +62,6 @@ public class Robot {
 	private float coord_source;
 	private float coord_storageLocation_1;
 	private float coord_storageLocation_2;
-	private float coord_storageLocation_3;
-	private float coord_storageLocation_4;
 	private float coord_dischargeChute;
 	private float coord_deliveryPlace;
 	private float corrd_buildingSite;
@@ -267,8 +265,6 @@ public class Robot {
 		coord_storageLocation_2 = returnNextPointOfInterestCoord();
 		LCD.clearDisplay();
 		LCD.drawString("2st" + coord_storageLocation_2, 0, 0);
-		//coord_storageLocation_3 = returnNextPointOfInterestCoord();
-		//coord_storageLocation_4 = returnNextPointOfInterestCoord();
 		coord_dischargeChute = returnNextPointOfInterestCoord();
 		LCD.clearDisplay();
 		LCD.drawString("chute" + coord_dischargeChute, 0, 0);
@@ -278,7 +274,7 @@ public class Robot {
 		corrd_buildingSite = returnNextPointOfInterestCoord();
 		LCD.clearDisplay();
 		LCD.drawString("build" + corrd_buildingSite, 0, 0);
-		//moveToSource();
+		moveToOOOPlace();
 		currentStatus = STATUS_IDLE;
 		return true;
 	}
@@ -301,6 +297,7 @@ public class Robot {
 		coord_storageLocation_2 = returnNextPointOfInterestCoord();
 		coord_storageLocation_1 = returnNextPointOfInterestCoord();
 		coord_source = returnNextPointOfInterestCoord();
+		moveToOOOPlace();
 		currentStatus = STATUS_IDLE;
 		return true;
 	}
@@ -403,10 +400,6 @@ public class Robot {
 		case 0: moveToCoordinate(coord_storageLocation_1); 
 				break;
 		case 1: moveToCoordinate(coord_storageLocation_2); 
-				break; 
-		case 2: moveToCoordinate(coord_storageLocation_3); 
-				break;
-		case 3: moveToCoordinate(coord_storageLocation_4); 
 		}
 		return true;
 	}
