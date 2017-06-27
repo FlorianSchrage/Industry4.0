@@ -1,15 +1,7 @@
-import java.io.IOException;
-import java.io.StringReader;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
-
-import lejos.hardware.BrickFinder;
-import lejos.hardware.BrickInfo;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.UnregulatedMotor;
@@ -46,7 +38,7 @@ public class Robot {
 			"MOVE_TO_STORAGE_LOCATION",
 			"RELEASE",
 			"PRESS_TIGHT",
-			"MOVE_TO_BUIlDING_POSITION",
+			"MOVE_TO_BUILDING_POSITION",
 			"MOVE_TO_OOO_PLACE"};
 
 	// Variables:
@@ -554,7 +546,7 @@ public class Robot {
 			}
 			
 			int number = -1;
-			if(action.equals( "MOVE_TO_BUILDING_SITE") || action.equals("MOVE_TO_STORAGE_LOCATION") || action.equals("MOVE_TO_BUIlDING_POSITION")){
+			if(action.equals( "MOVE_TO_BUILDING_SITE") || action.equals("MOVE_TO_STORAGE_LOCATION") || action.equals("MOVE_TO_BUILDING_POSITION")){
 				number = Integer.valueOf(json.substring(11).replaceAll("[^0-9]+", ""));
 			}
 			
