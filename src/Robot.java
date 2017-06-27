@@ -99,7 +99,7 @@ public class Robot {
 	
 	public static final String HOST = "192.168.1.10";
 	
-	private static final boolean DEBUG_MODE = true;
+	private static final boolean DEBUG_MODE = false;
 //	private static final int PORT = 12345;
 	
 	private SenderThread sender;
@@ -386,7 +386,8 @@ public class Robot {
 		motorA.setPower(70);
 		motorA.forward();
 		Delay.msDelay(1500);
-		motorA.stop();	
+		motorA.stop();
+		setCurrentBrickColor();
 		currentStatus = STATUS_IDLE;
 		return true;
 	}
