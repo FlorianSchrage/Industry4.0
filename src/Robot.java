@@ -60,6 +60,7 @@ public class Robot {
 	private float coord_outOfOrderPlace_2;
 		
 	// Height Coordinates:
+	private final float height_initializingPosition = (float)0.055;
 	private final float height_drivingPosition = (float)0.13;
 	private final float height_grippingPosition = (float)0.04;
 	
@@ -240,6 +241,11 @@ public class Robot {
 		return true;
 	}
 	
+	private Boolean moveToInitializingPosition(){
+		moveUpDown(height_initializingPosition);
+		return true;
+	}
+	
 	// ---------------------- MAIN FUNCTIONS ----------------------
 	
 	// ----- Initialization Methods -----
@@ -252,7 +258,7 @@ public class Robot {
 		currentStatus = STATUS_INITIALIZING;
 		id = 1;
 		position = "RIGHT";
-		moveToGrippingPosition();
+		moveToInitializingPosition();
 		release();
 		motorC.setPower(25);
 		
@@ -289,7 +295,7 @@ public class Robot {
 		currentStatus = STATUS_INITIALIZING;
 		id = 2;
 		position = "LEFT";
-		moveToGrippingPosition();
+		moveToInitializingPosition();
 		release();
 		motorC.setPower(25);
 		
