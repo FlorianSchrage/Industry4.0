@@ -252,7 +252,7 @@ public class Robot {
 		currentStatus = STATUS_INITIALIZING;
 		id = 1;
 		position = "RIGHT";
-		moveToBuildingPosition(0);
+		moveToGrippingPosition();
 		release();
 		motorC.setPower(25);
 		
@@ -289,7 +289,7 @@ public class Robot {
 		currentStatus = STATUS_INITIALIZING;
 		id = 2;
 		position = "LEFT";
-		moveToBuildingPosition(0);
+		moveToGrippingPosition();
 		release();
 		motorC.setPower(25);
 		
