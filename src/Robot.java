@@ -560,7 +560,7 @@ public class Robot {
 			}
 			
 			int number = -1;
-			if(action == "MOVE_TO_BUILDING_SITE" || action == "MOVE_TO_STORAGE_LOCATION" || action == "MOVE_TO_BUIDING_POSITION"){
+			if(action.equals( "MOVE_TO_BUILDING_SITE") || action.equals("MOVE_TO_STORAGE_LOCATION") || action.equals("MOVE_TO_BUIDING_POSITION")){
 				number = Integer.valueOf(json.substring(11).replaceAll("[^0-9]+", ""));
 			}
 			
