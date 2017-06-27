@@ -436,7 +436,7 @@ public class Robot {
 	 * @param height row indicator for the height.
 	 */
 	public void moveToBuildingPosition(float row){
-		moveUpDown((float)(height_grippingPosition + 0.012 * row));
+		moveUpDown((float)(height_grippingPosition + 0.001 + 0.012 * row));
 	}
 	
 	// ----- Robot Hand Methods -----
