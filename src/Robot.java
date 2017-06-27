@@ -437,8 +437,8 @@ public class Robot {
 	 * @return boolean indicates that the robot reached the target.
 	 */
 	public Boolean moveToBuildingPosition(float row){
-		//moveUpDown((float)(height_grippingPosition + 0.012 * row));
-		moveUpDown((float)0.055);
+		moveUpDown((float)(height_grippingPosition + 0.012 * row));
+		//moveUpDown((float)0.055);
 		return true;
 	}
 	
@@ -575,7 +575,7 @@ public class Robot {
 			   case "MOVE_TO_GRIPPING_POSITION": moveToGrippingPosition(); break;
 			   case "MOVE_TO_BUILDING_SITE": moveToBuildingSite(number); break;			
 			   case "MOVE_TO_STORAGE_LOCATION": moveToStorageLocation(number); break;		
-			   case "MOVE_TO_BUIDING_POSITION": moveToBuildingPosition(number);	break;	
+			   case "MOVE_TO_BUILDING_POSITION": moveToBuildingPosition(number);	break;	
 			   case "MOVE_TO_SOURCE": moveToSource(); break;
 			   case "MOVE_TO_OOO_PLACE": moveToOOOPlace();
 			}
