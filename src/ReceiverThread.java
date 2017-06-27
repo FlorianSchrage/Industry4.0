@@ -42,6 +42,7 @@ public class ReceiverThread extends Thread
 				socket = server.accept();
 				networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				apiRef.print("Socket (R) opened");
+				apiRef.print("IP: " + socket.getLocalAddress().getHostAddress());
 				
 				apiRef.print("Checking for Data");
 				if(networkIn.ready())
@@ -70,5 +71,9 @@ public class ReceiverThread extends Thread
 				try{ networkIn.close(); } catch(Exception e) {}
 			}
 		}
+	}
+	
+	public Socket getSocket() {
+		return socket;
 	}
 }

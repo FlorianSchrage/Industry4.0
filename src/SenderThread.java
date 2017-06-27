@@ -32,7 +32,8 @@ public class SenderThread extends Thread
 				apiRef.print("Sender starting");
 				socket = new Socket(Robot.HOST, PORT);
 				networkOut = new PrintWriter(socket.getOutputStream());
-				apiRef.print("Socket (S) opened");	
+				apiRef.print("Socket (S) opened");
+				apiRef.print("IP: " + socket.getLocalAddress().getHostAddress());
 			
 				try
 				{
@@ -67,5 +68,9 @@ public class SenderThread extends Thread
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public Socket getSocket() {
+		return socket;
 	}
 }
