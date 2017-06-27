@@ -524,7 +524,7 @@ public class Robot {
 				break;
 		case 13: currentBrickColor = "BROWN";
 				break;
-		default: currentBrickColor = "NONE";
+		default: currentBrickColor = null;
 		}
 	}
 	
