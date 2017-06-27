@@ -245,6 +245,7 @@ public class Robot {
 		id = 1;
 		position = "RIGHT";
 		motorC.setPower(25);
+		release();
 		
 		coord_outOfOrderPlace_1 = getLeftRightDistance();
 		LCD.drawString("ooo" + coord_outOfOrderPlace_1, 0, 0);
@@ -281,6 +282,7 @@ public class Robot {
 		id = 2;
 		position = "LEFT";
 		motorC.setPower(25);
+		release();
 		
 		coord_outOfOrderPlace_2 = getLeftRightDistance();
 		corrd_buildingSite = returnNextPointOfInterestCoord();
