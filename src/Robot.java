@@ -246,6 +246,10 @@ public class Robot {
 	
 	// ----- Initialization Methods -----
 	
+	/**
+	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the sorting robot.
+	 * @return boolean indicates that the initialization has finished.
+	 */
 	public Boolean initializeSortRobot(){
 		currentStatus = STATUS_INITIALIZING;
 		
@@ -280,6 +284,10 @@ public class Robot {
 		return true;
 	}
 	
+	/**
+	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the building robot.
+	 * @return boolean indicates that the initialization has finished.
+	 */
 	public Boolean initializeBuildRobot(){
 		currentStatus = STATUS_INITIALIZING;
 		
@@ -300,45 +308,82 @@ public class Robot {
 	
 	// ----- Getter Methods -----
 	
+	/**
+	 * Returns the robot ID.
+	 * @return id unique robot indicator.
+	 */
 	public int getID(){
 		return id;
 	}
 	
+	/**
+	 * Returns the current status of the robot.
+	 * @return currentStatus status of the robot.
+	 */
 	public String getCurrentStatus(){
 		return currentStatus;
 	}
 	
+	/**
+	 * Returns the position of the robot, indicating if it is the left or right robot on the bridge.
+	 * @return position indicates "LEFT" or "RIGHT".
+	 */
 	public String getPosition(){
 		return position;
 	}
 	
+	/**
+	 * Returns the color of the brick below the robot hand.
+	 * @return currentBrickColor current scanned brick color, e.g. "BLUE" or "NONE".
+	 */
 	public String getCurrentBrickColor(){
 		return currentBrickColor;
 	}
 	
 	// ----- Moving Methods: Left/Right -----
 	
+	/**
+	 * Robot moves to the delivery place.
+	 * @return boolean indicates that the robot reached the target.
+	 */
 	public Boolean moveToDeliveryPlace(){
 		moveToCoordinate(coord_deliveryPlace);
 		return true;
 	}
 	
+	/**
+	 * Robot moves to the discharge chute.
+	 * @return boolean indicates that the robot reached the target.
+	 */
 	public Boolean moveToDischargeChute(){
 		moveToCoordinate(coord_dischargeChute);
 		return true;
 	}
 	
+	/**
+	 * Robot moves to the indicated row of the building site.
+	 * @param number of row to which the robot should move.
+	 * @return boolean indicates that the robot reached the target.
+	 */
 	public Boolean moveToBuildingSite(int row){
 		//moveToCoordinate(corrd_buildingSite + (float)(row*0.064));
 		moveToCoordinate(corrd_buildingSite + (float)(row*0.016));
 		return true;
 	}
 	
+	/**
+	 * Robot moves to the source.
+	 * @return boolean indicates that the robot reached the target.
+	 */
 	public Boolean moveToSource(){
 		moveToCoordinate(coord_source);
 		return true;
 	}
 	
+	/**
+	 * Robot moves to its out of order place (outOfOrderPlace_1 if id=1, outOfOrderPlace_2 if id=2)
+	 * @return boolean indicates that the robot reached the target
+	 */
 	public Boolean moveToOOOPlace(){
 		if(id == 1){
 			moveToCoordinate(coord_outOfOrderPlace_1);
@@ -349,6 +394,11 @@ public class Robot {
 		return true;
 	}
 	
+	/**
+	 * Robot moves to the storage location with the indicated number
+	 * @param storageNumb indicates the number of the storage location
+	 * @return boolean indicates that the robot reached the target
+	 */
 	public Boolean moveToStorageLocation(int storageNumb){
 		switch(storageNumb){
 		case 1: moveToCoordinate(coord_storageLocation_1); 
@@ -364,16 +414,29 @@ public class Robot {
 	
 	// ----- Moving Methods: Up/Down -----
 	
+	/**
+	 * Robot moves to the driving position height
+	 * @return boolean indicates that the robot reached the target
+	 */
 	public Boolean moveToDrivingPosition(){
 		moveUpDown(height_drivingPosition);
 		return true;
 	}
 	
+	/**
+	 * Robot moves to the gripping position height 
+	 * @return boolean indicates that the robot reached the target
+	 */
 	public Boolean moveToGrippingPosition(){
 		moveUpDown(height_grippingPosition);
 		return true;
 	}
 	
+	/**
+	 * Robot moves to the building position height.
+	 * @param height indicator for the height.
+	 * @return boolean indicates that the robot reached the target.
+	 */
 	public Boolean moveToBuildingPosition(float height){
 		moveUpDown(height);
 		return true;
@@ -381,6 +444,10 @@ public class Robot {
 	
 	// ----- Robot Hand Methods -----
 	
+	/**
+	 * Closes the robot hand to grab a brick.
+	 * @return boolean which indicates that the robot closed the hand.
+	 */
 	public Boolean grab(){
 		currentStatus = STATUS_GRABBING;
 		motorA.setPower(70);
@@ -392,6 +459,10 @@ public class Robot {
 		return true;
 	}
 	
+	/**
+	 * Opens the robot hand to release a brick.
+	 * @return boolean which indicates that the robot opened the hand.
+	 */
 	public Boolean release(){
 		currentStatus = STATUS_RELEASING;
 		motorA.setPower(60);
@@ -402,6 +473,10 @@ public class Robot {
 		return true;
 	}
 	
+	/**
+	 * Closes the hand and moves the hand down to the ground to press a brick against the ground.
+	 * @return boolean which indicates that the robot pressed a brick against the ground.
+	 */
 	public Boolean pressTight(){
 		currentStatus = STATUS_GRABBING;
 		motorA.setPower(50);
@@ -415,6 +490,9 @@ public class Robot {
 		return true;
 	}
 
+	/**
+	 * Scans the current brick which is located below the robot hand and sets the color as currentBrickColor.
+	 */
 	public void setCurrentBrickColor(){
 		provider_color_brick.fetchSample(sample_color_brick, 0);
 		switch((int)sample_color_brick[0]){
@@ -452,11 +530,19 @@ public class Robot {
 	
 	// ----- JSON Methods -----
 	
+	/**
+	 * Creates and returns a JSON string containing information about the robot.
+	 * @return json A JSON String containing information about POSITION, COLOR and STATUS of the robot.
+	 */
 	public String getJsonString(){
 		String json = "{\"Robot_" + getID() + "\":{\"POSITION\":\"" + getPosition() + "\",\"COLOR\":\"" + getCurrentBrickColor() + "\",\"STATUS\":\"" + getCurrentStatus() + "\",\"IP\":\"" + sender.getSocket().getLocalAddress().getHostAddress() + "\"}}";		
 		return json;
 	}
 	
+	/**
+	 * Interprets a given JSON String as an action. If randomFailureEnabled is set true, then the robot will fail with a probability of 10% and won't interpret the given JSON String.
+	 * @param json JSON String containing an action and optionally a value.
+	 */
 	public void interpretJsonString(String json){
 		if(randomFailureEnabled & (randomGenerator.nextInt() % 10 == 4)){
 			currentStatus = STATUS_FAILED;
@@ -517,6 +603,10 @@ public class Robot {
 //		return socket;
 //	}
 
+	/**
+	 * Display a message on the robot screen.
+	 * @param message message to display.
+	 */
 	public void print(String message)
 	{
 		LCD.clear();
@@ -526,6 +616,9 @@ public class Robot {
 		LCD.clear();
 	}
 	
+	/**
+	 * Stops the communication with FESAS.
+	 */
 	private void stopCommunication()
 	{
 		print("Stopping Communication");
@@ -549,6 +642,9 @@ public class Robot {
 		print("Receiver terminated");
 	}
 	
+	/**
+	 * Restarts the communication with FESAS.
+	 */
 	private void restartCommunication()
 	{
 		print("Restarting Communication");
