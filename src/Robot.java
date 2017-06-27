@@ -241,10 +241,10 @@ public class Robot {
 	 */
 	public Boolean initializeSortRobot(){
 		currentStatus = STATUS_INITIALIZING;
-		
 		id = 1;
 		position = "RIGHT";
 		motorC.setPower(25);
+		moveToBuildingPosition(0);
 		release();
 		
 		coord_outOfOrderPlace_1 = getLeftRightDistance();
@@ -278,10 +278,10 @@ public class Robot {
 	 */
 	public Boolean initializeBuildRobot(){
 		currentStatus = STATUS_INITIALIZING;
-		
 		id = 2;
 		position = "LEFT";
 		motorC.setPower(25);
+		moveToBuildingPosition(0);
 		release();
 		
 		coord_outOfOrderPlace_2 = getLeftRightDistance();
