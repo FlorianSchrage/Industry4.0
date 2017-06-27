@@ -437,7 +437,7 @@ public class Robot {
 	 * @return boolean indicates that the robot reached the target.
 	 */
 	public Boolean moveToBuildingPosition(float row){
-		moveUpDown((float)(height_grippingPosition + 0.12 * row));
+		moveUpDown((float)(height_grippingPosition + 0.012 * row));
 		return true;
 	}
 	
