@@ -433,11 +433,11 @@ public class Robot {
 	
 	/**
 	 * Robot moves to the building position height.
-	 * @param height indicator for the height.
+	 * @param height row indicator for the height.
 	 * @return boolean indicates that the robot reached the target.
 	 */
-	public Boolean moveToBuildingPosition(float height){
-		moveUpDown(height);
+	public Boolean moveToBuildingPosition(float row){
+		moveUpDown((float)(height_grippingPosition + 0.12 * row));
 		return true;
 	}
 	
