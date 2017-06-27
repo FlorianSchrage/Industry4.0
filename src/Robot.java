@@ -105,6 +105,9 @@ public class Robot {
 		robot.startWorking();
 	}
 	
+	/**
+	 * Starts robot initialization and sets up and starts a sender and receiver thread.
+	 */
 	public void startWorking()
 	{
 		if(getAddress().equals("0.0.0.2")){
@@ -125,18 +128,24 @@ public class Robot {
 	
 	// ---------------------- HELPER FUNCTIONS ----------------------
 	
+	/**
+	 * Returns the local host address of the robot
+	 * @return address holds the local host address, e.g. "0.0.0.1"
+	 */
 	private String getAddress(){
 		String address = "";
 		try {
 			address = InetAddress.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return address;
 	}
 	
+	/**
+	 * Returns the current distance between the ultrasonic sensor sensor_distance_leftRight and the bridge border it is pointing at.
+	 * @return sample_distance_leftRight[0] holds the current distance 
+	 */
 	private float getLeftRightDistance(){
 		provider_distance_leftRight.fetchSample(sample_distance_leftRight, 0);
 		return sample_distance_leftRight[0];
@@ -243,9 +252,9 @@ public class Robot {
 		currentStatus = STATUS_INITIALIZING;
 		id = 1;
 		position = "RIGHT";
-		motorC.setPower(25);
 		moveToBuildingPosition(0);
 		release();
+		motorC.setPower(25);
 		
 		coord_outOfOrderPlace_1 = getLeftRightDistance();
 		LCD.drawString("ooo" + coord_outOfOrderPlace_1, 0, 0);
@@ -280,9 +289,9 @@ public class Robot {
 		currentStatus = STATUS_INITIALIZING;
 		id = 2;
 		position = "LEFT";
-		motorC.setPower(25);
 		moveToBuildingPosition(0);
 		release();
+		motorC.setPower(25);
 		
 		coord_outOfOrderPlace_2 = getLeftRightDistance();
 		corrd_buildingSite = returnNextPointOfInterestCoord();
