@@ -114,6 +114,33 @@ public class Robot {
 		Robot robot = new Robot();
 		robot.startWorking();
 		
+		robot.moveToOOOPlace();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
+		Delay.msDelay(500);
+		robot.moveToSource();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
+		Delay.msDelay(500);
+		robot.moveToStorageLocation(1);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
+		Delay.msDelay(500);
+		robot.moveToStorageLocation(2);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
+		Delay.msDelay(500);
+		robot.moveToDischargeChute();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
+		Delay.msDelay(500);
+		robot.moveToDeliveryPlace();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
+		Delay.msDelay(500);
+		robot.moveToBuildingSite(1);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 	}
 	
 	public void startWorking()
@@ -259,26 +286,40 @@ public class Robot {
 		
 		coord_outOfOrderPlace_1 = getLeftRightDistance();
 		LCD.drawString("ooo" + coord_outOfOrderPlace_1, 0, 0);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		coord_source = returnNextPointOfInterestCoord();
 		LCD.clearDisplay();
 		LCD.drawString("source" + coord_source, 0, 0);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		coord_storageLocation_1 = returnNextPointOfInterestCoord();
 		LCD.clearDisplay();
 		LCD.drawString("1st" + coord_storageLocation_1, 0, 0);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		coord_storageLocation_2 = returnNextPointOfInterestCoord();
 		LCD.clearDisplay();
 		LCD.drawString("2st" + coord_storageLocation_2, 0, 0);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		//coord_storageLocation_3 = returnNextPointOfInterestCoord();
 		//coord_storageLocation_4 = returnNextPointOfInterestCoord();
 		coord_dischargeChute = returnNextPointOfInterestCoord();
 		LCD.clearDisplay();
 		LCD.drawString("chute" + coord_dischargeChute, 0, 0);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		coord_deliveryPlace = returnNextPointOfInterestCoord();
 		LCD.clearDisplay();
 		LCD.drawString("delivery" + coord_deliveryPlace, 0, 0);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		corrd_buildingSite = returnNextPointOfInterestCoord();
 		LCD.clearDisplay();
 		LCD.drawString("build" + corrd_buildingSite, 0, 0);
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		//moveToSource();
 		currentStatus = STATUS_IDLE;
 		return true;
@@ -296,12 +337,26 @@ public class Robot {
 		motorC.setPower(25);
 		
 		coord_outOfOrderPlace_2 = getLeftRightDistance();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		corrd_buildingSite = returnNextPointOfInterestCoord();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		coord_deliveryPlace = returnNextPointOfInterestCoord();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		coord_dischargeChute = returnNextPointOfInterestCoord();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		coord_storageLocation_2 = returnNextPointOfInterestCoord();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		coord_storageLocation_1 = returnNextPointOfInterestCoord();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		coord_source = returnNextPointOfInterestCoord();
+		Sound.setVolume(5);
+		Sound.systemSound(true, 2);
 		currentStatus = STATUS_IDLE;
 		return true;
 	}
@@ -401,13 +456,13 @@ public class Robot {
 	 */
 	public Boolean moveToStorageLocation(int storageNumb){
 		switch(storageNumb){
-		case 1: moveToCoordinate(coord_storageLocation_1); 
+		case 0: moveToCoordinate(coord_storageLocation_1); 
 				break;
-		case 2: moveToCoordinate(coord_storageLocation_2); 
+		case 1: moveToCoordinate(coord_storageLocation_2); 
 				break;
-		case 3: moveToCoordinate(coord_storageLocation_3); 
+		case 2: moveToCoordinate(coord_storageLocation_3); 
 				break;
-		case 4: moveToCoordinate(coord_storageLocation_4); 
+		case 3: moveToCoordinate(coord_storageLocation_4); 
 		}
 		return true;
 	}
