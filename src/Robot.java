@@ -145,18 +145,27 @@ public class Robot {
 	
 	/**
 	 * Returns the current distance between the ultrasonic sensor sensor_distance_leftRight and the bridge border it is pointing at.
-	 * @return sample_distance_leftRight[0] holds the current distance 
+	 * @return the current distance to the bridge border.
 	 */
 	private float getLeftRightDistance(){
 		provider_distance_leftRight.fetchSample(sample_distance_leftRight, 0);
 		return sample_distance_leftRight[0];
 	}
 	
+	/**
+	 * Returns the current distance between the ultrasonic sensor sensor_distance_upDown and the floor it is pointing at.
+	 * @return the current distance to the floor.
+	 */
 	private float getUpDownDistance(){
 		provider_distance_upDown.fetchSample(sample_distance_upDown, 0);
 		return sample_distance_upDown[0];
 	}
 	
+	/**
+	 * Returns the left/right coordinate of the next point of interest.
+	 * Determines the coordinates by checking for red/blue color changes: Checks the color of the initial position (either blue or red) and searches for a color change to the other color than the initial color (if initial color is red, then it checks for blue and vice versa)).
+	 * @return the left/right distance of the determined point of interest.
+	 */
 	private float returnNextPointOfInterestCoord(){
 		provider_color_initialize.fetchSample(sample_color_initialize, 0);
 		float firstColor = sample_color_initialize[0];
@@ -177,6 +186,10 @@ public class Robot {
 		return getLeftRightDistance();
 	}
 	
+	/**
+	 * Moves to the given coordinate.
+	 * @param coord a float which describes the distance between the point of interest and the bridge border that the robot is pointing at.
+	 */
 	private void moveToCoordinate(float coord){
 		float currentCoord;
 		if(position == "LEFT"){
@@ -217,7 +230,11 @@ public class Robot {
 		}
 	}
 	
-	private Boolean moveUpDown(float height){
+	/**
+	 * Moves to the given height.
+	 * @param height a float which describes the distance between the point of interest and the bridge border that the robot is pointing at.
+	 */
+	private void moveUpDown(float height){
 		motorB.setPower(50);
 		float currentCoord;
 		while(true){
@@ -238,12 +255,13 @@ public class Robot {
 				break;
 			}
 		}
-		return true;
 	}
 	
-	private Boolean moveToInitializingPosition(){
+	/**
+	 * Moves to the height which it needs to correctly initialize itself.
+	 */
+	private void moveToInitializingPosition(){
 		moveUpDown(height_initializingPosition);
-		return true;
 	}
 	
 	// ---------------------- MAIN FUNCTIONS ----------------------
@@ -252,9 +270,8 @@ public class Robot {
 	
 	/**
 	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the sorting robot.
-	 * @return boolean indicates that the initialization has finished.
 	 */
-	public Boolean initializeSortRobot(){
+	public void initializeSortRobot(){
 		currentStatus = STATUS_INITIALIZING;
 		id = 1;
 		position = "RIGHT";
@@ -284,14 +301,12 @@ public class Robot {
 		LCD.drawString("build" + corrd_buildingSite, 0, 0);
 		moveToOOOPlace();
 		currentStatus = STATUS_IDLE;
-		return true;
 	}
 	
 	/**
 	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the building robot.
-	 * @return boolean indicates that the initialization has finished.
 	 */
-	public Boolean initializeBuildRobot(){
+	public void initializeBuildRobot(){
 		currentStatus = STATUS_INITIALIZING;
 		id = 2;
 		position = "LEFT";
@@ -308,7 +323,6 @@ public class Robot {
 		coord_source = returnNextPointOfInterestCoord();
 		moveToOOOPlace();
 		currentStatus = STATUS_IDLE;
-		return true;
 	}
 	
 	// ----- Getter Methods -----
@@ -348,109 +362,89 @@ public class Robot {
 	// ----- Moving Methods: Left/Right -----
 	
 	/**
-	 * Robot moves to the delivery place.
-	 * @return boolean indicates that the robot reached the target.
+	 * Moves to the delivery place.
 	 */
-	public Boolean moveToDeliveryPlace(){
+	public void moveToDeliveryPlace(){
 		moveToCoordinate(coord_deliveryPlace);
-		return true;
 	}
 	
 	/**
-	 * Robot moves to the discharge chute.
-	 * @return boolean indicates that the robot reached the target.
+	 * Moves to the discharge chute.
 	 */
-	public Boolean moveToDischargeChute(){
+	public void moveToDischargeChute(){
 		moveToCoordinate(coord_dischargeChute);
-		return true;
 	}
 	
 	/**
-	 * Robot moves to the indicated row of the building site.
+	 * Moves to the indicated row of the building site.
 	 * @param number of row to which the robot should move.
-	 * @return boolean indicates that the robot reached the target.
 	 */
-	public Boolean moveToBuildingSite(int row){
+	public void moveToBuildingSite(int row){
 		//moveToCoordinate(corrd_buildingSite + (float)(row*0.064));
 		moveToCoordinate(corrd_buildingSite + (float)(row*0.016));
-		return true;
 	}
 	
 	/**
-	 * Robot moves to the source.
-	 * @return boolean indicates that the robot reached the target.
+	 * Moves to the source.
 	 */
-	public Boolean moveToSource(){
+	public void moveToSource(){
 		moveToCoordinate(coord_source);
-		return true;
 	}
 	
 	/**
-	 * Robot moves to its out of order place (outOfOrderPlace_1 if id=1, outOfOrderPlace_2 if id=2)
-	 * @return boolean indicates that the robot reached the target
+	 * Moves to its out of order place (outOfOrderPlace_1 if id=1, outOfOrderPlace_2 if id=2)
 	 */
-	public Boolean moveToOOOPlace(){
+	public void moveToOOOPlace(){
 		if(id == 1){
 			moveToCoordinate(coord_outOfOrderPlace_1);
 		}
 		else{
 			moveToCoordinate(coord_outOfOrderPlace_2);
 		}
-		return true;
 	}
 	
 	/**
-	 * Robot moves to the storage location with the indicated number
+	 * Moves to the storage location with the indicated number
 	 * @param storageNumb indicates the number of the storage location
-	 * @return boolean indicates that the robot reached the target
 	 */
-	public Boolean moveToStorageLocation(int storageNumb){
+	public void moveToStorageLocation(int storageNumb){
 		switch(storageNumb){
 		case 0: moveToCoordinate(coord_storageLocation_1); 
 				break;
 		case 1: moveToCoordinate(coord_storageLocation_2); 
 		}
-		return true;
 	}
 	
 	// ----- Moving Methods: Up/Down -----
 	
 	/**
-	 * Robot moves to the driving position height
-	 * @return boolean indicates that the robot reached the target
+	 * Moves to the driving position height
 	 */
-	public Boolean moveToDrivingPosition(){
+	public void moveToDrivingPosition(){
 		moveUpDown(height_drivingPosition);
-		return true;
 	}
 	
 	/**
-	 * Robot moves to the gripping position height 
-	 * @return boolean indicates that the robot reached the target
+	 * Moves to the gripping position height 
 	 */
-	public Boolean moveToGrippingPosition(){
+	public void moveToGrippingPosition(){
 		moveUpDown(height_grippingPosition);
-		return true;
 	}
 	
 	/**
-	 * Robot moves to the building position height.
+	 * Moves to the building position height.
 	 * @param height row indicator for the height.
-	 * @return boolean indicates that the robot reached the target.
 	 */
-	public Boolean moveToBuildingPosition(float row){
+	public void moveToBuildingPosition(float row){
 		moveUpDown((float)(height_grippingPosition + 0.012 * row));
-		//moveUpDown((float)0.055);
-		return true;
 	}
 	
 	// ----- Robot Hand Methods -----
 	
 	/**
 	 * Closes the robot hand to grab a brick.
-	 * @return boolean which indicates that the robot closed the hand.
 	 */
-	public Boolean grab(){
+	public void grab(){
 		currentStatus = STATUS_GRABBING;
 		motorA.setPower(70);
 		motorA.forward();
@@ -458,28 +452,24 @@ public class Robot {
 		motorA.stop();
 		setCurrentBrickColor();
 		currentStatus = STATUS_IDLE;
-		return true;
 	}
 	
 	/**
 	 * Opens the robot hand to release a brick.
-	 * @return boolean which indicates that the robot opened the hand.
 	 */
-	public Boolean release(){
+	public void release(){
 		currentStatus = STATUS_RELEASING;
 		motorA.setPower(60);
 		motorA.backward();
 		Delay.msDelay(2000);
 		motorA.stop();
 		currentStatus = STATUS_IDLE;
-		return true;
 	}
 	
 	/**
 	 * Closes the hand and moves the hand down to the ground to press a brick against the ground.
-	 * @return boolean which indicates that the robot pressed a brick against the ground.
 	 */
-	public Boolean pressTight(){
+	public void pressTight(){
 		currentStatus = STATUS_GRABBING;
 		motorA.setPower(50);
 		motorA.forward();
@@ -489,7 +479,6 @@ public class Robot {
 		moveUpDown((float)0.039);
 		Delay.msDelay(2000);
 		currentStatus = STATUS_IDLE;
-		return true;
 	}
 
 	/**
@@ -534,7 +523,7 @@ public class Robot {
 	
 	/**
 	 * Creates and returns a JSON string containing information about the robot.
-	 * @return json A JSON String containing information about POSITION, COLOR and STATUS of the robot.
+	 * @return json JSON String containing information about POSITION, COLOR and STATUS of the robot.
 	 */
 	public String getJsonString(){
 		String json = "{\"Robot_" + getID() + "\":{\"POSITION\":\"" + getPosition() + "\",\"COLOR\":\"" + getCurrentBrickColor() + "\",\"STATUS\":\"" + getCurrentStatus() + "\",\"IP\":\"" + sender.getSocket().getLocalAddress().getHostAddress() + "\"}}";		
@@ -619,7 +608,7 @@ public class Robot {
 	}
 	
 	/**
-	 * Stops the communication with FESAS.
+	 * Stops the communication by terminating the sender and receiver threads.
 	 */
 	private void stopCommunication()
 	{
@@ -645,7 +634,7 @@ public class Robot {
 	}
 	
 	/**
-	 * Restarts the communication with FESAS.
+	 * Restarts the communication by setting up and starting a sender and receiver thread.
 	 */
 	private void restartCommunication()
 	{
