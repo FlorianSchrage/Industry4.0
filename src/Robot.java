@@ -60,7 +60,7 @@ public class Robot {
 	private float coord_outOfOrderPlace_2;
 		
 	// Height Coordinates:
-	private final float height_initializingPosition = (float)0.055;
+	private final float height_initializingPosition = (float)0.045;
 	private final float height_drivingPosition = (float)0.13;
 	private final float height_grippingPosition = (float)0.04;
 	
