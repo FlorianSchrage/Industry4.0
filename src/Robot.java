@@ -21,7 +21,6 @@ import lejos.utility.Delay;
 
 public class Robot {
 	
-// Constants:
 	// Statuses:
 	private final String STATUS_INITIALIZING = "INITIALIZING";
 	private final String STATUS_IDLE = "IDLE";
@@ -137,12 +136,6 @@ public class Robot {
 		
 		Robot robot = new Robot();
 		robot.startWorking();
-		
-		robot.moveToSource();
-		robot.moveToGrippingPosition();
-		robot.grab();
-		robot.moveToDrivingPosition();
-		robot.moveToBuildingSite(0);
 	}
 	
 	/**
@@ -368,7 +361,7 @@ public class Robot {
 		for(int i=1; i<places_horizontal.size()-1; i++){
 			coords_places_horizontal.put(places_horizontal.get(i), returnNextPointOfInterestCoord());
 			LCD.clearDisplay();
-			LCD.drawString(places_horizontal.get(i) + coords_places_horizontal.get(places_horizontal.get(i)), 0, 0);
+			LCD.drawString(coords_places_horizontal.get(places_horizontal.get(i)) + places_horizontal.get(i), 0, 0);
 		}
 		motor_horizontal.setPower(power_motor_horizontal);
 		moveToOOOPlace();
@@ -456,8 +449,12 @@ public class Robot {
 	 * @param number of row to which the robot should move.
 	 */
 	public void moveToBuildingSite(int row){
-		//moveToCoordinate(corrd_buildingSite + (float)(row*0.064));
-		moveToCoordinate(coords_places_horizontal.get("buildingSite") + (float)(row * buildingSite_width));
+		if(id == 1){
+			moveToCoordinate(coords_places_horizontal.get("buildingSite") - (float)(row * buildingSite_width));
+		}
+		else{
+			moveToCoordinate(coords_places_horizontal.get("buildingSite") + (float)(row * buildingSite_width));
+		}
 	}
 	
 	/**
