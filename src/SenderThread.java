@@ -30,7 +30,7 @@ public class SenderThread extends Thread
 			try
 			{
 				apiRef.print("Sender starting");
-				socket = new Socket(Robot.HOST, PORT);
+				socket = new Socket(Robot.ip_host, PORT);
 				networkOut = new PrintWriter(socket.getOutputStream());
 				apiRef.print("Socket (S) opened");
 				apiRef.print("IP: " + socket.getLocalAddress().getHostAddress());
