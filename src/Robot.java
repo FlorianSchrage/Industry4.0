@@ -98,6 +98,11 @@ public class Robot {
 	private int power_motor_vertical_down;
 	private int power_motor_robotHand_open;
 	private int power_motor_robotHand_close;
+	
+	// Delays:
+	private int delay_openRobotHand;
+	private int delay_closeRobotHand;
+	private int delay_restartCommunicationAfterFailure;
 		
 	// Sensors:
 	private final EV3UltrasonicSensor sensor_distance_leftRight = new EV3UltrasonicSensor(SensorPort.S1);
@@ -352,6 +357,10 @@ public class Robot {
 		power_motor_vertical_down = Integer.valueOf(properties_userDefined.getProperty("power_motor_vertical_down"));
 		power_motor_robotHand_open = Integer.valueOf(properties_userDefined.getProperty("power_motor_robotHand_open"));
 		power_motor_robotHand_close = Integer.valueOf(properties_userDefined.getProperty("power_motor_robotHand_close"));
+		
+		delay_closeRobotHand = Integer.valueOf(properties_userDefined.getProperty("delay_closeRobotHand"));
+		delay_openRobotHand = Integer.valueOf(properties_userDefined.getProperty("delay_openRobotHand"));
+		delay_restartCommunicationAfterFailure = Integer.valueOf(properties_userDefined.getProperty("delay_restartCommunicationAfterFailure"));
 	}
 	
 	private void initializehorizontalPlaceCoordinates(){
@@ -516,7 +525,7 @@ public class Robot {
 		currentStatus = STATUS_GRABBING;
 		motor_robotHand.setPower(power_motor_robotHand_close);
 		motor_robotHand.forward();
-		Delay.msDelay(1500);
+		Delay.msDelay(delay_closeRobotHand);
 		motor_robotHand.stop();
 		setCurrentBrickColor();
 		currentStatus = STATUS_IDLE;
@@ -529,7 +538,7 @@ public class Robot {
 		currentStatus = STATUS_RELEASING;
 		motor_robotHand.setPower(power_motor_robotHand_open);
 		motor_robotHand.backward();
-		Delay.msDelay(2000);
+		Delay.msDelay(delay_openRobotHand);
 		motor_robotHand.stop();
 		currentStatus = STATUS_IDLE;
 	}
@@ -582,7 +591,7 @@ public class Robot {
 			currentStatus = STATUS_FAILED;
 			stopCommunication();
 			moveToOOOPlace();
-			Delay.msDelay(120000);
+			Delay.msDelay(delay_restartCommunicationAfterFailure);
 			restartCommunication();
 		}
 		else{
@@ -612,7 +621,7 @@ public class Robot {
 			   case "MOVE_TO_BUILDING_POSITION": moveToBuildingPosition(number); break;	
 			   case "MOVE_TO_SOURCE": moveToSource(); break;
 			   case "MOVE_TO_OOO_PLACE": moveToOOOPlace(); break;
-			   default: throw new IllegalStateException("State not recognized. Given state: " + action);
+			   default: throw new IllegalStateException("Action not recognized. Given action: " + action);
 			}
 		}
 	}
