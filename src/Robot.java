@@ -136,12 +136,6 @@ public class Robot {
 		
 		Robot robot = new Robot();
 		robot.startWorking();
-		
-		robot.moveToSource();
-		robot.moveToGrippingPosition();
-		robot.grab();
-		robot.moveToDrivingPosition();
-		robot.moveToBuildingSite(0);
 	}
 	
 	/**
