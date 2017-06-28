@@ -11,11 +11,13 @@ public class SenderThread extends Thread
 	private Socket socket;
 	private PrintWriter networkOut;
 	private static final int PORT = 22222;
+	private boolean firstTime;
 	
 	public SenderThread(Robot apiRef, Semaphore sema)
 	{
 		this.apiRef = apiRef;
 		this.sema = sema;
+		firstTime = true;
 	}
 	
 	public void terminate()
@@ -29,6 +31,17 @@ public class SenderThread extends Thread
 		{
 			try
 			{
+				if(firstTime) {
+					try
+					{
+						Thread.sleep(90000);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				firstTime = false;
+				
 				apiRef.print("Sender starting");
 				socket = new Socket(Robot.ip_host, PORT);
 				networkOut = new PrintWriter(socket.getOutputStream());
