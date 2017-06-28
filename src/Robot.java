@@ -21,7 +21,6 @@ import lejos.utility.Delay;
 
 public class Robot {
 	
-// Constants:
 	// Statuses:
 	private final String STATUS_INITIALIZING = "INITIALIZING";
 	private final String STATUS_IDLE = "IDLE";
@@ -80,20 +79,12 @@ public class Robot {
 	private boolean randomFailureEnabled = false;
 	private Properties properties_userDefined = new Properties();
 		
-	// Bridge Coordinates:
-	private float coord_outOfOrderPlace_1;
-	private float coord_source;
-	private float coord_storageLocation_1;
-	private float coord_storageLocation_2;
-	private float coord_dischargeChute;
-	private float coord_deliveryPlace;
-	private float corrd_buildingSite;
-	private float coord_outOfOrderPlace_2;
-		
-	// Height Coordinates:
-	private final float height_initializingPosition = (float)0.05;
-	private final float height_drivingPosition = (float)0.13;
-	private final float height_grippingPosition = (float)0.04;
+	// Vertical Coordinates:
+	private float height_initializingPosition;
+	private float height_drivingPosition;
+	private float height_grippingPosition;
+	private float buildingPosition_height;
+	private float buildingSite_width;
 	
 	// Motors:
 	private final UnregulatedMotor motor_robotHand = new UnregulatedMotor(MotorPort.A);
@@ -376,7 +367,7 @@ public class Robot {
 		for(int i=1; i<places_horizontal.size()-1; i++){
 			coords_places_horizontal.put(places_horizontal.get(i), returnNextPointOfInterestCoord());
 			LCD.clearDisplay();
-			LCD.drawString(places_horizontal.get(i) + coords_places_horizontal.get(places_horizontal.get(i)), 0, 0);
+			LCD.drawString(coords_places_horizontal.get(places_horizontal.get(i)) + places_horizontal.get(i), 0, 0);
 		}
 		motor_horizontal.setPower(power_motor_horizontal);
 		moveToOOOPlace();
