@@ -455,8 +455,12 @@ public class Robot {
 	 * @param number of row to which the robot should move.
 	 */
 	public void moveToBuildingSite(int row){
-		//moveToCoordinate(corrd_buildingSite + (float)(row*0.064));
-		moveToCoordinate(coords_places_horizontal.get("buildingSite") + (float)(row * buildingSite_width));
+		if(id == 1){
+			moveToCoordinate(coords_places_horizontal.get("buildingSite") - (float)(row * buildingSite_width));
+		}
+		else{
+			moveToCoordinate(coords_places_horizontal.get("buildingSite") + (float)(row * buildingSite_width));
+		}
 	}
 	
 	/**
