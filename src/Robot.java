@@ -130,7 +130,6 @@ public class Robot {
 //	private Socket socket;
 	
 	public static void main(String[] args) {
-		
 		Sound.setVolume(5);
 		Sound.systemSound(true, 2);
 		
@@ -150,6 +149,9 @@ public class Robot {
 		}
 		else if (getAddress().equals(ip_local_robot_left)){
 			initializeBuildRobot();
+		}
+		else{
+			throw new IllegalStateException("Local robot ip does not match an user defined robot ip. Given local ip: " + getAddress());
 		}
 		
 		Semaphore sema = new Semaphore(1);
@@ -185,9 +187,10 @@ public class Robot {
         	if(input!=null){
         		try {
 				input.close();
-			} catch (IOException e) {
+        		} 
+        		catch (IOException e) {
 				e.printStackTrace();
-			}
+        		}
         	}
         }
 	}
@@ -364,6 +367,7 @@ public class Robot {
 			LCD.drawString(coords_places_horizontal.get(places_horizontal.get(i)) + places_horizontal.get(i), 0, 0);
 		}
 		motor_horizontal.setPower(power_motor_horizontal);
+		moveToDrivingPosition();
 		moveToOOOPlace();
 	}
 	
@@ -452,7 +456,7 @@ public class Robot {
 		if(id == 1){
 			moveToCoordinate(coords_places_horizontal.get("buildingSite") - (float)(row * buildingSite_width));
 		}
-		else{
+		else if(id == 2){
 			moveToCoordinate(coords_places_horizontal.get("buildingSite") + (float)(row * buildingSite_width));
 		}
 	}
@@ -607,7 +611,8 @@ public class Robot {
 			   case "MOVE_TO_STORAGE_LOCATION": moveToStorageLocation(number); break;		
 			   case "MOVE_TO_BUILDING_POSITION": moveToBuildingPosition(number); break;	
 			   case "MOVE_TO_SOURCE": moveToSource(); break;
-			   case "MOVE_TO_OOO_PLACE": moveToOOOPlace();
+			   case "MOVE_TO_OOO_PLACE": moveToOOOPlace(); break;
+			   default: throw new IllegalStateException("State not recognized. Given state: " + action);
 			}
 		}
 	}
