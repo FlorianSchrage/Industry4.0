@@ -34,10 +34,10 @@ public class Robot {
 		
 	// Actions:
 	private final String[] actions = {
-			"GRAB", 
-			"MOVE_TO_DELIVERY_PLACE", 
-			"MOVE_TO_DISCHARGE_CHUTE", 
-			"MOVE_TO_DRIVING_POSITION", 
+			"GRAB",
+			"MOVE_TO_DELIVERY_PLACE",
+			"MOVE_TO_DISCHARGE_CHUTE",
+			"MOVE_TO_DRIVING_POSITION",
 			"MOVE_TO_GRIPPING_POSITION",
 			"MOVE_TO_BUILDING_SITE",
 			"MOVE_TO_SOURCE",
