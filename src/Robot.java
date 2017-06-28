@@ -1,5 +1,12 @@
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 import lejos.hardware.Sound;
@@ -39,8 +46,31 @@ public class Robot {
 			"RELEASE",
 			"PRESS_TIGHT",
 			"MOVE_TO_BUILDING_POSITION",
-			"MOVE_TO_OOO_PLACE"};
+			"MOVE_TO_OOO_PLACE"
+	};
 
+	//Colors:
+	private final String[] colors = {
+		"RED",
+		"GREEN",
+		"BLUE",
+		"YELLOW",
+		"MAGENTA",
+		"ORANGE",
+		"WHITE",
+		"BLACK",
+		"PINK",
+		"GRAY",
+		"LIGHT_GRAY",
+		"DARK_GRAY",
+		"CYAN",
+		"BROWN"
+	};
+	
+	// Horizontal Places:
+	private List<String> places_horizontal;
+	private HashMap<String, Float> coords_places_horizontal = new HashMap<String, Float>();
+	
 	// Variables:
 	private String position;
 	private String currentStatus;
@@ -48,26 +78,27 @@ public class Robot {
 	private int id;  // 1 = SortRobot  2 = BuildRobot
 	private Random randomGenerator = new Random();
 	private boolean randomFailureEnabled = false;
+	private Properties properties_userDefined = new Properties();
 		
-	// Bridge Coordinates:
-	private float coord_outOfOrderPlace_1;
-	private float coord_source;
-	private float coord_storageLocation_1;
-	private float coord_storageLocation_2;
-	private float coord_dischargeChute;
-	private float coord_deliveryPlace;
-	private float corrd_buildingSite;
-	private float coord_outOfOrderPlace_2;
-		
-	// Height Coordinates:
-	private final float height_initializingPosition = (float)0.047;
-	private final float height_drivingPosition = (float)0.13;
-	private final float height_grippingPosition = (float)0.04;
+	// Vertical Coordinates:
+	private float height_initializingPosition;
+	private float height_drivingPosition;
+	private float height_grippingPosition;
+	private float buildingPosition_height;
+	private float buildingSite_width;
 	
 	// Motors:
-	private final UnregulatedMotor motorA = new UnregulatedMotor(MotorPort.A);
-	private final UnregulatedMotor motorB = new UnregulatedMotor(MotorPort.B);	
-	private final UnregulatedMotor motorC = new UnregulatedMotor(MotorPort.C);
+	private final UnregulatedMotor motor_robotHand = new UnregulatedMotor(MotorPort.A);
+	private final UnregulatedMotor motor_vertical = new UnregulatedMotor(MotorPort.B);	
+	private final UnregulatedMotor motor_horizontal = new UnregulatedMotor(MotorPort.C);
+	
+	// Power:
+	private int power_motor_horizontal;
+	private int power_motor_horizontal_initialization;
+	private int power_motor_vertical_up;
+	private int power_motor_vertical_down;
+	private int power_motor_robotHand_open;
+	private int power_motor_robotHand_close;
 		
 	// Sensors:
 	private final EV3UltrasonicSensor sensor_distance_leftRight = new EV3UltrasonicSensor(SensorPort.S1);
@@ -88,9 +119,11 @@ public class Robot {
 	private final SampleProvider provider_color_initialize = sensor_color_initialize.getColorIDMode();
 	private float[] sample_color_initialize = new float[provider_color_initialize.sampleSize()];
 	
-	public static final String HOST = "192.168.1.10";
+	public static String ip_host;
+	private String ip_local_robot_right;
+	private String ip_local_robot_left;
 	
-	private static final boolean DEBUG_MODE = false;
+	private boolean debug_mode;
 //	private static final int PORT = 12345;
 	
 	private SenderThread sender;
@@ -104,6 +137,12 @@ public class Robot {
 		
 		Robot robot = new Robot();
 		robot.startWorking();
+		
+		robot.moveToSource();
+		robot.moveToGrippingPosition();
+		robot.grab();
+		robot.moveToDrivingPosition();
+		robot.moveToBuildingSite(0);
 	}
 	
 	/**
@@ -111,10 +150,12 @@ public class Robot {
 	 */
 	public void startWorking()
 	{
-		if(getAddress().equals("0.0.0.2")){
+		initializeUserDefinedGeneralVariables();
+		
+		if(getAddress().equals(ip_local_robot_right)){
 			initializeSortRobot();
 		}
-		else if (getAddress().equals("0.0.0.3")){
+		else if (getAddress().equals(ip_local_robot_left)){
 			initializeBuildRobot();
 		}
 		
@@ -128,6 +169,35 @@ public class Robot {
 	}
 	
 	// ---------------------- HELPER FUNCTIONS ----------------------
+	
+	/**
+	 * Reads the user defined properties file.
+	 */
+	private void readProperties(){
+		InputStream input = null;
+
+    	try {
+    		String filename = "robot.properties";
+    		input = Robot.class.getClassLoader().getResourceAsStream(filename);
+    		if(input==null){
+    	        System.out.println("Sorry, unable to find " + filename);
+    		    return;
+    		}
+
+    		properties_userDefined.load(input);
+
+    	} catch (IOException ex) {
+    		ex.printStackTrace();
+        } finally{
+        	if(input!=null){
+        		try {
+				input.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        	}
+        }
+	}
 	
 	/**
 	 * Returns the local host address of the robot
@@ -172,14 +242,15 @@ public class Robot {
 		while(true){
 			provider_color_initialize.fetchSample(sample_color_initialize, 0);
 			if(firstColor != sample_color_initialize[0] && (sample_color_initialize[0] == 0 || sample_color_initialize[0] == 2)){
-				motorC.stop();
+				motor_horizontal.stop();
 				currentStatus = STATUS_IDLE;
 				break;
 			}
-			if(position == "LEFT"){
-			motorC.forward();
-			}else if(position == "RIGHT"){
-				motorC.backward();
+			else if(position == "LEFT"){
+				motor_horizontal.forward();
+			}
+			else if(position == "RIGHT"){
+				motor_horizontal.backward();
 			}
 			currentStatus = STATUS_MOVING_LEFT;
 		}
@@ -196,15 +267,15 @@ public class Robot {
 			while(true){
 				currentCoord = getLeftRightDistance();
 				if(Math.round(currentCoord*100 - coord*100) > 0){
-					motorC.backward();
+					motor_horizontal.backward();
 					currentStatus = STATUS_MOVING_RIGHT;
 				}
 				else if(Math.round(currentCoord*100 - coord*100) < 0){
-					motorC.forward();
+					motor_horizontal.forward();
 					currentStatus = STATUS_MOVING_LEFT;
 				}
 				else{
-					motorC.stop();
+					motor_horizontal.stop();
 					currentStatus = STATUS_IDLE;
 					break;
 				}
@@ -214,15 +285,15 @@ public class Robot {
 			while(true){
 				currentCoord = getLeftRightDistance();
 				if(Math.round(currentCoord*100 - coord*100) > 0){
-					motorC.forward();
+					motor_horizontal.forward();
 					currentStatus = STATUS_MOVING_RIGHT;
 				}
 				else if(Math.round(currentCoord*100 - coord*100) < 0){
-					motorC.backward();
+					motor_horizontal.backward();
 					currentStatus = STATUS_MOVING_LEFT;
 				}
 				else{
-					motorC.stop();
+					motor_horizontal.stop();
 					currentStatus = STATUS_IDLE;
 					break;
 				}
@@ -235,22 +306,21 @@ public class Robot {
 	 * @param height a float which describes the distance between the point of interest and the bridge border that the robot is pointing at.
 	 */
 	private void moveUpDown(float height){
-		motorB.setPower(50);
 		float currentCoord;
 		while(true){
 			currentCoord = getUpDownDistance();
 			if(Math.round(currentCoord*100 - height*100) > 0){
-				motorB.setPower(50);
-				motorB.backward();
+				motor_vertical.setPower(power_motor_vertical_down);
+				motor_vertical.backward();
 				currentStatus = STATUS_MOVING_DOWN;
 			}
 			else if(Math.round(currentCoord*100 - height*100) < 0){
-				motorB.setPower(75);
-				motorB.forward();
+				motor_vertical.setPower(power_motor_vertical_up);
+				motor_vertical.forward();
 				currentStatus = STATUS_MOVING_UP;
 			}
 			else{
-				motorB.stop();
+				motor_vertical.stop();
 				currentStatus = STATUS_IDLE;
 				break;
 			}
@@ -264,6 +334,46 @@ public class Robot {
 		moveUpDown(height_initializingPosition);
 	}
 	
+	private void initializeUserDefinedGeneralVariables(){
+		readProperties();
+
+		places_horizontal = Arrays.asList(properties_userDefined.getProperty("places_horizontal").split(","));
+		
+		height_initializingPosition = Float.valueOf(properties_userDefined.getProperty("height_initializingPosition"));
+		height_drivingPosition = Float.valueOf(properties_userDefined.getProperty("height_drivingPosition"));
+		height_grippingPosition = Float.valueOf(properties_userDefined.getProperty("height_grippingPosition"));
+		buildingPosition_height = Float.valueOf(properties_userDefined.getProperty("buildingPosition_height"));
+		buildingSite_width = Float.valueOf(properties_userDefined.getProperty("buildingSite_width"));
+		
+		ip_host = properties_userDefined.getProperty("ip_host");
+		ip_local_robot_right = properties_userDefined.getProperty("ip_local_robot_right");
+		ip_local_robot_left = properties_userDefined.getProperty("ip_local_robot_left");
+		debug_mode = Boolean.valueOf(properties_userDefined.getProperty("debug_mode"));
+		
+		power_motor_horizontal_initialization = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization"));
+		power_motor_horizontal = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal"));
+		power_motor_vertical_up = Integer.valueOf(properties_userDefined.getProperty("power_motor_vertical_up"));
+		power_motor_vertical_down = Integer.valueOf(properties_userDefined.getProperty("power_motor_vertical_down"));
+		power_motor_robotHand_open = Integer.valueOf(properties_userDefined.getProperty("power_motor_robotHand_open"));
+		power_motor_robotHand_close = Integer.valueOf(properties_userDefined.getProperty("power_motor_robotHand_close"));
+	}
+	
+	private void initializehorizontalPlaceCoordinates(){
+		moveToInitializingPosition();
+		release();
+		motor_horizontal.setPower(power_motor_horizontal_initialization);
+		
+		coords_places_horizontal.put(places_horizontal.get(0), getLeftRightDistance());
+		LCD.drawString(places_horizontal.get(0) + coords_places_horizontal.get(places_horizontal.get(0)), 0, 0);
+		for(int i=1; i<places_horizontal.size()-1; i++){
+			coords_places_horizontal.put(places_horizontal.get(i), returnNextPointOfInterestCoord());
+			LCD.clearDisplay();
+			LCD.drawString(places_horizontal.get(i) + coords_places_horizontal.get(places_horizontal.get(i)), 0, 0);
+		}
+		motor_horizontal.setPower(power_motor_horizontal);
+		moveToOOOPlace();
+	}
+	
 	// ---------------------- MAIN FUNCTIONS ----------------------
 	
 	// ----- Initialization Methods -----
@@ -275,31 +385,7 @@ public class Robot {
 		currentStatus = STATUS_INITIALIZING;
 		id = 1;
 		position = "RIGHT";
-		moveToInitializingPosition();
-		release();
-		motorC.setPower(25);
-		
-		coord_outOfOrderPlace_1 = getLeftRightDistance();
-		LCD.drawString("ooo" + coord_outOfOrderPlace_1, 0, 0);
-		coord_source = returnNextPointOfInterestCoord();
-		LCD.clearDisplay();
-		LCD.drawString("source" + coord_source, 0, 0);
-		coord_storageLocation_1 = returnNextPointOfInterestCoord();
-		LCD.clearDisplay();
-		LCD.drawString("1st" + coord_storageLocation_1, 0, 0);
-		coord_storageLocation_2 = returnNextPointOfInterestCoord();
-		LCD.clearDisplay();
-		LCD.drawString("2st" + coord_storageLocation_2, 0, 0);
-		coord_dischargeChute = returnNextPointOfInterestCoord();
-		LCD.clearDisplay();
-		LCD.drawString("chute" + coord_dischargeChute, 0, 0);
-		coord_deliveryPlace = returnNextPointOfInterestCoord();
-		LCD.clearDisplay();
-		LCD.drawString("delivery" + coord_deliveryPlace, 0, 0);
-		corrd_buildingSite = returnNextPointOfInterestCoord();
-		LCD.clearDisplay();
-		LCD.drawString("build" + corrd_buildingSite, 0, 0);
-		moveToOOOPlace();
+		initializehorizontalPlaceCoordinates();
 		currentStatus = STATUS_IDLE;
 	}
 	
@@ -310,18 +396,8 @@ public class Robot {
 		currentStatus = STATUS_INITIALIZING;
 		id = 2;
 		position = "LEFT";
-		moveToInitializingPosition();
-		release();
-		motorC.setPower(25);
-		
-		coord_outOfOrderPlace_2 = getLeftRightDistance();
-		corrd_buildingSite = returnNextPointOfInterestCoord();
-		coord_deliveryPlace = returnNextPointOfInterestCoord();
-		coord_dischargeChute = returnNextPointOfInterestCoord();
-		coord_storageLocation_2 = returnNextPointOfInterestCoord();
-		coord_storageLocation_1 = returnNextPointOfInterestCoord();
-		coord_source = returnNextPointOfInterestCoord();
-		moveToOOOPlace();
+		Collections.reverse(places_horizontal);
+		initializehorizontalPlaceCoordinates();
 		currentStatus = STATUS_IDLE;
 	}
 	
@@ -365,14 +441,14 @@ public class Robot {
 	 * Moves to the delivery place.
 	 */
 	public void moveToDeliveryPlace(){
-		moveToCoordinate(coord_deliveryPlace);
+		moveToCoordinate(coords_places_horizontal.get("deliveryPlace"));
 	}
 	
 	/**
 	 * Moves to the discharge chute.
 	 */
 	public void moveToDischargeChute(){
-		moveToCoordinate(coord_dischargeChute);
+		moveToCoordinate(coords_places_horizontal.get("dischargeChute"));
 	}
 	
 	/**
@@ -381,26 +457,21 @@ public class Robot {
 	 */
 	public void moveToBuildingSite(int row){
 		//moveToCoordinate(corrd_buildingSite + (float)(row*0.064));
-		moveToCoordinate(corrd_buildingSite + (float)(row*0.016));
+		moveToCoordinate(coords_places_horizontal.get("buildingSite") + (float)(row * buildingSite_width));
 	}
 	
 	/**
 	 * Moves to the source.
 	 */
 	public void moveToSource(){
-		moveToCoordinate(coord_source);
+		moveToCoordinate(coords_places_horizontal.get("source"));
 	}
 	
 	/**
 	 * Moves to its out of order place (outOfOrderPlace_1 if id=1, outOfOrderPlace_2 if id=2)
 	 */
 	public void moveToOOOPlace(){
-		if(id == 1){
-			moveToCoordinate(coord_outOfOrderPlace_1);
-		}
-		else{
-			moveToCoordinate(coord_outOfOrderPlace_2);
-		}
+		moveToCoordinate(coords_places_horizontal.get("outOfOrderPlace_" + id));
 	}
 	
 	/**
@@ -408,11 +479,7 @@ public class Robot {
 	 * @param storageNumb indicates the number of the storage location
 	 */
 	public void moveToStorageLocation(int storageNumb){
-		switch(storageNumb){
-		case 0: moveToCoordinate(coord_storageLocation_1); 
-				break;
-		case 1: moveToCoordinate(coord_storageLocation_2); 
-		}
+		moveToCoordinate(coords_places_horizontal.get("storageLocation_" + (storageNumb + 1)));
 	}
 	
 	// ----- Moving Methods: Up/Down -----
@@ -436,7 +503,7 @@ public class Robot {
 	 * @param height row indicator for the height.
 	 */
 	public void moveToBuildingPosition(float row){
-		moveUpDown((float)(height_grippingPosition + 0.001 + 0.012 * row));
+		moveUpDown((float)(height_grippingPosition + 0.001 + buildingPosition_height * row));
 	}
 	
 	// ----- Robot Hand Methods -----
@@ -446,10 +513,10 @@ public class Robot {
 	 */
 	public void grab(){
 		currentStatus = STATUS_GRABBING;
-		motorA.setPower(70);
-		motorA.forward();
+		motor_robotHand.setPower(power_motor_robotHand_close);
+		motor_robotHand.forward();
 		Delay.msDelay(1500);
-		motorA.stop();
+		motor_robotHand.stop();
 		setCurrentBrickColor();
 		currentStatus = STATUS_IDLE;
 	}
@@ -459,10 +526,10 @@ public class Robot {
 	 */
 	public void release(){
 		currentStatus = STATUS_RELEASING;
-		motorA.setPower(60);
-		motorA.backward();
+		motor_robotHand.setPower(power_motor_robotHand_open);
+		motor_robotHand.backward();
 		Delay.msDelay(2000);
-		motorA.stop();
+		motor_robotHand.stop();
 		currentStatus = STATUS_IDLE;
 	}
 	
@@ -471,11 +538,11 @@ public class Robot {
 	 */
 	public void pressTight(){
 		currentStatus = STATUS_GRABBING;
-		motorA.setPower(50);
-		motorA.forward();
+		motor_robotHand.setPower(50);
+		motor_robotHand.forward();
 		Delay.msDelay(2500);
-		motorA.stop();
-		motorB.setPower(100);
+		motor_robotHand.stop();
+		motor_vertical.setPower(100);
 		moveUpDown((float)0.039);
 		Delay.msDelay(2000);
 		currentStatus = STATUS_IDLE;
@@ -486,36 +553,11 @@ public class Robot {
 	 */
 	public void setCurrentBrickColor(){
 		provider_color_brick.fetchSample(sample_color_brick, 0);
-		switch((int)sample_color_brick[0]){
-		case 0: currentBrickColor = "RED";
-				break;
-		case 1: currentBrickColor = "GREEN";
-				break;
-		case 2: currentBrickColor = "BLUE";
-				break;
-		case 3: currentBrickColor = "YELLOW";
-				break;
-		case 4: currentBrickColor = "MAGENTA";
-				break;
-		case 5: currentBrickColor = "ORANGE";
-				break;
-		case 6: currentBrickColor = "WHITE";
-				break;
-		case 7: currentBrickColor = "BLACK";
-				break;
-		case 8: currentBrickColor = "PINK";
-				break;
-		case 9: currentBrickColor = "GRAY";
-				break;
-		case 10: currentBrickColor = "LIGHT_GRAY";
-				break;
-		case 11: currentBrickColor = "DARK_GRAY";
-				break;
-		case 12: currentBrickColor = "CYAN";
-				break;
-		case 13: currentBrickColor = "BROWN";
-				break;
-		default: currentBrickColor = null;
+		if(0 <= (int)sample_color_brick[0] && (int)sample_color_brick[0] <= 13){
+			currentBrickColor = colors[(int)sample_color_brick[0]];
+		}
+		else{
+			currentBrickColor = null;
 		}
 	}
 	
@@ -602,7 +644,7 @@ public class Robot {
 	{
 		LCD.clear();
 		LCD.drawString(message, 1, 1);
-		if(DEBUG_MODE)
+		if(debug_mode)
 			Delay.msDelay(3000);
 		LCD.clear();
 	}
@@ -653,11 +695,11 @@ public class Robot {
 	
 	private void write(){
 		LCD.clearDisplay();
-		LCD.drawString(" " + coord_deliveryPlace, 0, 0);
+		LCD.drawString(" " + coords_places_horizontal.get("deliveryPlace"), 0, 0);
 	}
 	
 	private void write2(){
 		LCD.clearDisplay();
-		LCD.drawString(" " + coord_dischargeChute, 0, 0);
+		LCD.drawString(" " + coords_places_horizontal.get("dischargeChute"), 0, 0);
 	}
 }
