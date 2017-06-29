@@ -703,7 +703,7 @@ public class Robot {
 		print("Restarting Communication");
 		Semaphore sema = new Semaphore(1);
 		
-		sender = new SenderThread(this, sema, delay_initialize);
+		sender = new SenderThread(this, sema);
 		receiver = new ReceiverThread(this, sema);
 		
 		sender.start();
@@ -723,4 +723,3 @@ public class Robot {
 		LCD.drawString(" " + coords_places_horizontal.get("dischargeChute"), 0, 0);
 	}
 }
-
