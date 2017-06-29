@@ -157,7 +157,7 @@ public class Robot {
 	 */
 	public void startWorking()
 	{
-		initializeUserDefinedVariables();
+		initializePropertiesBasedVariables();
 		
 		if(getAddress().equals(ip_local_robot_right)){
 			initializeSortRobot();
@@ -350,11 +350,30 @@ public class Robot {
 		}
 	}
 	
+	/**
+	 * Simulates a random failure.
+	 * The failed robot will stop the communication, move to the out of order place and restarts the communication after waiting for some time.
+	 */
 	private void simulateFailure(){
+		currentStatus = STATUS_FAILED;
+		stopCommunication();
 		
+		Sound.playTone(100, 800);
+		Delay.msDelay(200);
+		Sound.playTone(100, 800);
+		Delay.msDelay(200);
+		Sound.playTone(100, 800);
+		
+		moveToOOOPlace();
+		Delay.msDelay(delay_restartCommunicationAfterFailure);
+		restartCommunication();
+		currentStatus = STATUS_IDLE;
 	}
 	
-	private void initializeUserDefinedVariables(){
+	/**
+	 * Initializes variables with information from the properties file.
+	 */
+	private void initializePropertiesBasedVariables(){
 		readProperties();
 
 		places_horizontal = Arrays.asList(properties_userDefined.getProperty("places_horizontal").split(","));
@@ -387,6 +406,9 @@ public class Robot {
 		delay_sending = Integer.valueOf(properties_userDefined.getProperty("delay_sending"));
 	}
 	
+	/**
+	 * Initializes the horizontal place coordinates by scanning the environment for places.
+	 */
 	private void initializehorizontalPlaceCoordinates(){
 		moveToInitializingPosition();
 		release();
@@ -632,18 +654,7 @@ public class Robot {
 	 */
 	public void interpretJsonString(String json){
 		if(randomFailureEnabled & (randomGenerator.nextInt() % 10 == 4)){
-			currentStatus = STATUS_FAILED;
-			stopCommunication();
-			
-			Sound.playTone(100, 800);
-			Delay.msDelay(200);
-			Sound.playTone(100, 800);
-			Delay.msDelay(200);
-			Sound.playTone(100, 800);
-			
-			moveToOOOPlace();
-			Delay.msDelay(delay_restartCommunicationAfterFailure);
-			restartCommunication();
+			simulateFailure();
 		}
 		else{
 			String action = "";
