@@ -97,7 +97,8 @@ public class Robot {
 	private final UnregulatedMotor motor_horizontal = new UnregulatedMotor(MotorPort.C);
 	
 	// Power:
-	private int power_motor_horizontal;
+	private int power_motor_horizontal_1;
+	private int power_motor_horizontal_2;
 	private int power_motor_horizontal_initialization;
 	private int power_motor_vertical_up;
 	private int power_motor_vertical_down;
@@ -368,7 +369,8 @@ public class Robot {
 		randomFailureEnabled = Boolean.valueOf(properties_userDefined.getProperty("randomFailureEnabled"));
 		
 		power_motor_horizontal_initialization = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization"));
-		power_motor_horizontal = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal"));
+		power_motor_horizontal_1 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_1"));
+		power_motor_horizontal_2 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_2"));
 		power_motor_vertical_up = Integer.valueOf(properties_userDefined.getProperty("power_motor_vertical_up"));
 		power_motor_vertical_down = Integer.valueOf(properties_userDefined.getProperty("power_motor_vertical_down"));
 		power_motor_robotHand_open = Integer.valueOf(properties_userDefined.getProperty("power_motor_robotHand_open"));
@@ -393,7 +395,12 @@ public class Robot {
 			LCD.clearDisplay();
 			LCD.drawString(coords_places_horizontal.get(places_horizontal.get(i)) + places_horizontal.get(i), 0, 0);
 		}
-		motor_horizontal.setPower(power_motor_horizontal);
+		if(id == 1){
+			motor_horizontal.setPower(power_motor_horizontal_1);
+		}
+		else if(id == 2){
+			motor_horizontal.setPower(power_motor_horizontal_2);
+		}
 		moveToDrivingPosition();
 		moveToOOOPlace();
 	}
