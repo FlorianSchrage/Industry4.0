@@ -456,6 +456,11 @@ public class Robot {
 	 * Moves to the delivery place.
 	 */
 	public void moveToDeliveryPlace(){
+		Sound.playTone(200, 100);
+		Sound.playTone(300, 100);
+		Sound.playTone(400, 100);
+		Sound.playTone(500, 100);
+		Sound.playTone(600, 100);
 		moveToCoordinate(coords_places_horizontal.get("deliveryPlace"));
 	}
 	
@@ -463,6 +468,8 @@ public class Robot {
 	 * Moves to the discharge chute.
 	 */
 	public void moveToDischargeChute(){
+		Sound.playTone(1000, 150);
+		Sound.playTone(100, 850);
 		moveToCoordinate(coords_places_horizontal.get("dischargeChute"));
 	}
 	
@@ -471,6 +478,11 @@ public class Robot {
 	 * @param number of row to which the robot should move.
 	 */
 	public void moveToBuildingSite(int row){
+		Sound.playTone(700, 100);
+		Sound.playTone(800, 100);
+		Sound.playTone(900, 100);
+		Sound.playTone(1000, 100);
+		Sound.playTone(1100, 100);
 		if(id == 1){
 			moveToCoordinate(coords_places_horizontal.get("buildingSite") - (float)(row * buildingSite_width));
 		}
@@ -483,6 +495,7 @@ public class Robot {
 	 * Moves to the source.
 	 */
 	public void moveToSource(){
+		Sound.playTone(1000, 300);
 		moveToCoordinate(coords_places_horizontal.get("source"));
 	}
 	
@@ -490,6 +503,11 @@ public class Robot {
 	 * Moves to its out of order place (outOfOrderPlace_1 if id=1, outOfOrderPlace_2 if id=2)
 	 */
 	public void moveToOOOPlace(){
+		Sound.playTone(100, 800);
+		Delay.msDelay(200);
+		Sound.playTone(100, 800);
+		Delay.msDelay(200);
+		Sound.playTone(100, 800);
 		moveToCoordinate(coords_places_horizontal.get("outOfOrderPlace_" + id));
 	}
 	
@@ -498,6 +516,8 @@ public class Robot {
 	 * @param storageNumb indicates the number of the storage location
 	 */
 	public void moveToStorageLocation(int storageNumb){
+		Sound.playTone(100, 150);
+		Sound.playTone(1000, 850);
 		moveToCoordinate(coords_places_horizontal.get("storageLocation_" + (storageNumb + 1)));
 	}
 	
