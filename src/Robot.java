@@ -113,16 +113,16 @@ public class Robot {
 	private int delay_sending;
 		
 	// Sensors:
-	private final EV3UltrasonicSensor sensor_distance_leftRight = new EV3UltrasonicSensor(SensorPort.S1);
-	private final EV3UltrasonicSensor sensor_distance_upDown = new EV3UltrasonicSensor(SensorPort.S2);
-	private final EV3ColorSensor sensor_color_brick = new EV3ColorSensor(SensorPort.S3);
-	private final EV3ColorSensor sensor_color_initialize = new EV3ColorSensor(SensorPort.S4);
+	private final EV3UltrasonicSensor sensor_distance_horizontal = new EV3UltrasonicSensor(SensorPort.S1);
+	private final EV3UltrasonicSensor sensor_distance_vertical = new EV3UltrasonicSensor(SensorPort.S4);
+	private final EV3ColorSensor sensor_color_brick = new EV3ColorSensor(SensorPort.S2);
+	private final EV3ColorSensor sensor_color_initialize = new EV3ColorSensor(SensorPort.S3);
 		
 	// Sample Providers
-	private final SampleProvider provider_distance_leftRight = sensor_distance_leftRight.getDistanceMode();
+	private final SampleProvider provider_distance_leftRight = sensor_distance_horizontal.getDistanceMode();
 	private float[] sample_distance_leftRight = new float[provider_distance_leftRight.sampleSize()];
 		
-	private final SampleProvider provider_distance_upDown = sensor_distance_upDown.getDistanceMode();
+	private final SampleProvider provider_distance_upDown = sensor_distance_vertical.getDistanceMode();
 	private float[] sample_distance_upDown = new float[provider_distance_leftRight.sampleSize()];
 		
 	private final SampleProvider provider_color_brick = sensor_color_brick.getColorIDMode();
@@ -348,6 +348,10 @@ public class Robot {
 		else{
 			moveUpDown(height_initializingPosition_2);
 		}
+	}
+	
+	private void simulateFailure(){
+		
 	}
 	
 	private void initializeUserDefinedVariables(){
