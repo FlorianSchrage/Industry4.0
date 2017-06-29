@@ -84,7 +84,8 @@ public class Robot {
 	private Properties properties_userDefined = new Properties();
 		
 	// Vertical Coordinates:
-	private float height_initializingPosition;
+	private float height_initializingPosition_1;
+	private float height_initializingPosition_2;
 	private float height_drivingPosition;
 	private float height_grippingPosition;
 	private float buildingPosition_height;
@@ -340,7 +341,12 @@ public class Robot {
 	 * Moves to the height which it needs to correctly initialize itself.
 	 */
 	private void moveToInitializingPosition(){
-		moveUpDown(height_initializingPosition);
+		if(id == 1){
+			moveUpDown(height_initializingPosition_1);
+		}
+		else{
+			moveUpDown(height_initializingPosition_2);
+		}
 	}
 	
 	private void initializeUserDefinedVariables(){
@@ -348,7 +354,8 @@ public class Robot {
 
 		places_horizontal = Arrays.asList(properties_userDefined.getProperty("places_horizontal").split(","));
 		
-		height_initializingPosition = Float.valueOf(properties_userDefined.getProperty("height_initializingPosition"));
+		height_initializingPosition_1 = Float.valueOf(properties_userDefined.getProperty("height_initializingPosition_1"));
+		height_initializingPosition_2 = Float.valueOf(properties_userDefined.getProperty("height_initializingPosition_2"));
 		height_drivingPosition = Float.valueOf(properties_userDefined.getProperty("height_drivingPosition"));
 		height_grippingPosition = Float.valueOf(properties_userDefined.getProperty("height_grippingPosition"));
 		buildingPosition_height = Float.valueOf(properties_userDefined.getProperty("buildingPosition_height"));
