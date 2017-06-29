@@ -108,6 +108,7 @@ public class Robot {
 	private int delay_robotHand_open;
 	private int delay_robotHand_close;
 	private int delay_restartCommunicationAfterFailure;
+	private int delay_sending;
 		
 	// Sensors:
 	private final EV3UltrasonicSensor sensor_distance_leftRight = new EV3UltrasonicSensor(SensorPort.S1);
@@ -168,7 +169,7 @@ public class Robot {
 		
 		Semaphore sema = new Semaphore(1);
 		
-		sender = new SenderThread(this, sema, delay_initialize);
+		sender = new SenderThread(this, sema, delay_initialize, delay_sending);
 		receiver = new ReceiverThread(this, sema);
 		
 		sender.start();
@@ -370,6 +371,7 @@ public class Robot {
 		delay_robotHand_open = Integer.valueOf(properties_userDefined.getProperty("delay_robotHand_open"));
 		delay_restartCommunicationAfterFailure = Integer.valueOf(properties_userDefined.getProperty("delay_restartCommunicationAfterFailure"));
 		delay_initialize = Integer.valueOf(properties_userDefined.getProperty("delay_initialize"));
+		delay_sending = Integer.valueOf(properties_userDefined.getProperty("delay_sending"));
 	}
 	
 	private void initializehorizontalPlaceCoordinates(){
@@ -723,7 +725,7 @@ public class Robot {
 		print("Restarting Communication");
 		Semaphore sema = new Semaphore(1);
 		
-		sender = new SenderThread(this, sema, delay_initialize);
+		sender = new SenderThread(this, sema, delay_initialize, delay_sending);
 		receiver = new ReceiverThread(this, sema);
 		
 		sender.start();

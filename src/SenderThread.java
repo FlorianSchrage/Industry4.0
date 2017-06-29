@@ -13,12 +13,14 @@ public class SenderThread extends Thread
 	private static final int PORT = 22222;
 	private boolean firstTime;
 	private int delay_initialize;
+	private int delay_sending;
 	
-	public SenderThread(Robot apiRef, Semaphore sema, int delay_initialize)
+	public SenderThread(Robot apiRef, Semaphore sema, int delay_initialize, int delay_sending)
 	{
 		this.apiRef = apiRef;
 		this.sema = sema;
 		this.delay_initialize = delay_initialize;
+		this.delay_sending = delay_sending;
 		firstTime = true;
 	}
 	
@@ -77,7 +79,7 @@ public class SenderThread extends Thread
 			
 			try
 			{
-				Thread.sleep(1000);
+				Thread.sleep(delay_sending);
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();
