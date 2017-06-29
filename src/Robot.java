@@ -49,7 +49,7 @@ public class Robot {
 	};
 
 	//Colors:
-	private final String[] colors = {
+	private final List<String> colors = Arrays.asList(
 		"RED",
 		"GREEN",
 		"BLUE",
@@ -64,7 +64,9 @@ public class Robot {
 		"DARK_GRAY",
 		"CYAN",
 		"YELLOW"
-	};
+	);
+	private int color_initialization_1;
+	private int color_initialization_2;
 	
 	// Horizontal Places:
 	private List<String> places_horizontal;
@@ -254,7 +256,7 @@ public class Robot {
 		while(true){
 			moveToInitializingPosition(); // added just to check
 			provider_color_initialize.fetchSample(sample_color_initialize, 0);
-			if(firstColor != sample_color_initialize[0] && (sample_color_initialize[0] == 0 || sample_color_initialize[0] == 3)){
+			if(firstColor != sample_color_initialize[0] && (sample_color_initialize[0] == color_initialization_1 || sample_color_initialize[0] == color_initialization_2)){
 				motor_horizontal.stop();
 				currentStatus = STATUS_IDLE;
 				break;
@@ -378,6 +380,8 @@ public class Robot {
 	private void initializePropertiesBasedVariables(){
 		readProperties();
 
+		color_initialization_1 = colors.indexOf(properties_userDefined.getProperty("color_initialization_1"));
+		color_initialization_2 = colors.indexOf(properties_userDefined.getProperty("color_initialization_2"));
 		places_horizontal = Arrays.asList(properties_userDefined.getProperty("places_horizontal").split(","));
 		
 		height_initializingPosition_1 = Float.valueOf(properties_userDefined.getProperty("height_initializingPosition_1"));
@@ -638,7 +642,7 @@ public class Robot {
 	public void setCurrentBrickColor(){
 		provider_color_brick.fetchSample(sample_color_brick, 0);
 		if(0 <= (int)sample_color_brick[0] && (int)sample_color_brick[0] <= 13){
-			currentBrickColor = colors[(int)sample_color_brick[0]];
+			currentBrickColor = colors.get((int)sample_color_brick[0]);
 		}
 		else{
 			currentBrickColor = null;
