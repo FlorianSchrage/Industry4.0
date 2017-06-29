@@ -119,11 +119,11 @@ public class Robot {
 	private final EV3ColorSensor sensor_color_initialize = new EV3ColorSensor(SensorPort.S3);
 		
 	// Sample Providers
-	private final SampleProvider provider_distance_leftRight = sensor_distance_horizontal.getDistanceMode();
-	private float[] sample_distance_leftRight = new float[provider_distance_leftRight.sampleSize()];
+	private final SampleProvider provider_distance_horizontal = sensor_distance_horizontal.getDistanceMode();
+	private float[] sample_distance_horizontal = new float[provider_distance_horizontal.sampleSize()];
 		
-	private final SampleProvider provider_distance_upDown = sensor_distance_vertical.getDistanceMode();
-	private float[] sample_distance_upDown = new float[provider_distance_leftRight.sampleSize()];
+	private final SampleProvider provider_distance_vertical = sensor_distance_vertical.getDistanceMode();
+	private float[] sample_distance_vertical = new float[provider_distance_horizontal.sampleSize()];
 		
 	private final SampleProvider provider_color_brick = sensor_color_brick.getColorIDMode();
 	private float[] sample_color_brick = new float[provider_color_brick.sampleSize()];
@@ -225,12 +225,12 @@ public class Robot {
 	}
 	
 	/**
-	 * Returns the current distance between the ultrasonic sensor sensor_distance_leftRight and the bridge border it is pointing at.
+	 * Returns the current distance between the ultrasonic sensor sensor_distance_horizontal and the bridge border it is pointing at.
 	 * @return the current distance to the bridge border.
 	 */
 	private float getLeftRightDistance(){
-		provider_distance_leftRight.fetchSample(sample_distance_leftRight, 0);
-		return sample_distance_leftRight[0];
+		provider_distance_horizontal.fetchSample(sample_distance_horizontal, 0);
+		return sample_distance_horizontal[0];
 	}
 	
 	/**
@@ -238,14 +238,14 @@ public class Robot {
 	 * @return the current distance to the floor.
 	 */
 	private float getUpDownDistance(){
-		provider_distance_upDown.fetchSample(sample_distance_upDown, 0);
-		return sample_distance_upDown[0];
+		provider_distance_vertical.fetchSample(sample_distance_vertical, 0);
+		return sample_distance_vertical[0];
 	}
 	
 	/**
 	 * Returns the left/right coordinate of the next point of interest.
-	 * Determines the coordinates by checking for red/blue color changes: Checks the color of the initial position (either blue or red) and searches for a color change to the other color than the initial color (if initial color is red, then it checks for blue and vice versa)).
-	 * @return the left/right distance of the determined point of interest.
+	 * Determines the coordinates by checking for red/yellow color changes: Checks the color of the initial position (either yellow or red) and searches for a color change to the other color than the initial color (if initial color is red, then it checks for blue and vice versa)).
+	 * @return the horizontal distance of the determined point of interest.
 	 */
 	private float returnNextPointOfInterestCoord(){
 		provider_color_initialize.fetchSample(sample_color_initialize, 0);
@@ -253,7 +253,7 @@ public class Robot {
 		while(true){
 			moveToInitializingPosition(); // added just to check
 			provider_color_initialize.fetchSample(sample_color_initialize, 0);
-			if(firstColor != sample_color_initialize[0] && (sample_color_initialize[0] == 0 || sample_color_initialize[0] == 2)){
+			if(firstColor != sample_color_initialize[0] && (sample_color_initialize[0] == 0 || sample_color_initialize[0] == 3)){
 				motor_horizontal.stop();
 				currentStatus = STATUS_IDLE;
 				break;
