@@ -251,6 +251,7 @@ public class Robot {
 		provider_color_initialize.fetchSample(sample_color_initialize, 0);
 		float firstColor = sample_color_initialize[0];
 		while(true){
+			moveToInitializingPosition(); // added just to check
 			provider_color_initialize.fetchSample(sample_color_initialize, 0);
 			if(firstColor != sample_color_initialize[0] && (sample_color_initialize[0] == 0 || sample_color_initialize[0] == 2)){
 				motor_horizontal.stop();
