@@ -70,13 +70,17 @@ public class Robot {
 	private List<String> places_horizontal;
 	private HashMap<String, Float> coords_places_horizontal = new HashMap<String, Float>();
 	
-	// Variables:
+	// General unique or current information:
 	private String position;
 	private String currentStatus;
 	private String currentBrickColor;	
 	private int id;  // 1 = SortRobot  2 = BuildRobot
+	
+	// Simulated Failure:
 	private Random randomGenerator = new Random();
-	private boolean randomFailureEnabled = false;
+	private boolean randomFailureEnabled;
+	
+	// User defined properties:
 	private Properties properties_userDefined = new Properties();
 		
 	// Vertical Coordinates:
@@ -100,8 +104,9 @@ public class Robot {
 	private int power_motor_robotHand_close;
 	
 	// Delays:
-	private int delay_openRobotHand;
-	private int delay_closeRobotHand;
+	private int delay_initialize;
+	private int delay_robotHand_open;
+	private int delay_robotHand_close;
 	private int delay_restartCommunicationAfterFailure;
 		
 	// Sensors:
@@ -123,10 +128,12 @@ public class Robot {
 	private final SampleProvider provider_color_initialize = sensor_color_initialize.getColorIDMode();
 	private float[] sample_color_initialize = new float[provider_color_initialize.sampleSize()];
 	
-	public static String ip_host;
+	// Local IPs
 	private String ip_local_robot_right;
 	private String ip_local_robot_left;
 	
+	// Communication
+	public static String ip_host;
 	private boolean debug_mode;
 //	private static final int PORT = 12345;
 	
@@ -147,7 +154,7 @@ public class Robot {
 	 */
 	public void startWorking()
 	{
-		initializeUserDefinedGeneralVariables();
+		initializeUserDefinedVariables();
 		
 		if(getAddress().equals(ip_local_robot_right)){
 			initializeSortRobot();
@@ -161,7 +168,7 @@ public class Robot {
 		
 		Semaphore sema = new Semaphore(1);
 		
-		sender = new SenderThread(this, sema);
+		sender = new SenderThread(this, sema, delay_initialize);
 		receiver = new ReceiverThread(this, sema);
 		
 		sender.start();
@@ -335,7 +342,7 @@ public class Robot {
 		moveUpDown(height_initializingPosition);
 	}
 	
-	private void initializeUserDefinedGeneralVariables(){
+	private void initializeUserDefinedVariables(){
 		readProperties();
 
 		places_horizontal = Arrays.asList(properties_userDefined.getProperty("places_horizontal").split(","));
@@ -350,6 +357,7 @@ public class Robot {
 		ip_local_robot_right = properties_userDefined.getProperty("ip_local_robot_right");
 		ip_local_robot_left = properties_userDefined.getProperty("ip_local_robot_left");
 		debug_mode = Boolean.valueOf(properties_userDefined.getProperty("debug_mode"));
+		randomFailureEnabled = Boolean.valueOf(properties_userDefined.getProperty("randomFailureEnabled"));
 		
 		power_motor_horizontal_initialization = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization"));
 		power_motor_horizontal = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal"));
@@ -358,9 +366,10 @@ public class Robot {
 		power_motor_robotHand_open = Integer.valueOf(properties_userDefined.getProperty("power_motor_robotHand_open"));
 		power_motor_robotHand_close = Integer.valueOf(properties_userDefined.getProperty("power_motor_robotHand_close"));
 		
-		delay_closeRobotHand = Integer.valueOf(properties_userDefined.getProperty("delay_closeRobotHand"));
-		delay_openRobotHand = Integer.valueOf(properties_userDefined.getProperty("delay_openRobotHand"));
+		delay_robotHand_close = Integer.valueOf(properties_userDefined.getProperty("delay_robotHand_close"));
+		delay_robotHand_open = Integer.valueOf(properties_userDefined.getProperty("delay_robotHand_open"));
 		delay_restartCommunicationAfterFailure = Integer.valueOf(properties_userDefined.getProperty("delay_restartCommunicationAfterFailure"));
+		delay_initialize = Integer.valueOf(properties_userDefined.getProperty("delay_initialize"));
 	}
 	
 	private void initializehorizontalPlaceCoordinates(){
@@ -525,7 +534,7 @@ public class Robot {
 		currentStatus = STATUS_GRABBING;
 		motor_robotHand.setPower(power_motor_robotHand_close);
 		motor_robotHand.forward();
-		Delay.msDelay(delay_closeRobotHand);
+		Delay.msDelay(delay_robotHand_close);
 		motor_robotHand.stop();
 		setCurrentBrickColor();
 		currentStatus = STATUS_IDLE;
@@ -538,7 +547,7 @@ public class Robot {
 		currentStatus = STATUS_RELEASING;
 		motor_robotHand.setPower(power_motor_robotHand_open);
 		motor_robotHand.backward();
-		Delay.msDelay(delay_openRobotHand);
+		Delay.msDelay(delay_robotHand_open);
 		motor_robotHand.stop();
 		currentStatus = STATUS_IDLE;
 	}
