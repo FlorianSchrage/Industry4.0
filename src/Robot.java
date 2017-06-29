@@ -63,7 +63,7 @@ public class Robot {
 		"LIGHT_GRAY",
 		"DARK_GRAY",
 		"CYAN",
-		"BROWN"
+		"YELLOW"
 	};
 	
 	// Horizontal Places:
