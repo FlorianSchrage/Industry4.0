@@ -99,7 +99,8 @@ public class Robot {
 	// Power:
 	private int power_motor_horizontal_1;
 	private int power_motor_horizontal_2;
-	private int power_motor_horizontal_initialization;
+	private int power_motor_horizontal_initialization_1;
+	private int power_motor_horizontal_initialization_2;
 	private int power_motor_vertical_up;
 	private int power_motor_vertical_down;
 	private int power_motor_robotHand_open;
@@ -392,7 +393,8 @@ public class Robot {
 		debug_mode = Boolean.valueOf(properties_userDefined.getProperty("debug_mode"));
 		randomFailureEnabled = Boolean.valueOf(properties_userDefined.getProperty("randomFailureEnabled"));
 		
-		power_motor_horizontal_initialization = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization"));
+		power_motor_horizontal_initialization_1 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization_1"));
+		power_motor_horizontal_initialization_2 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization_2"));
 		power_motor_horizontal_1 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_1"));
 		power_motor_horizontal_2 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_2"));
 		power_motor_vertical_up = Integer.valueOf(properties_userDefined.getProperty("power_motor_vertical_up"));
@@ -413,7 +415,12 @@ public class Robot {
 	private void initializehorizontalPlaceCoordinates(){
 		moveToInitializingPosition();
 		release();
-		motor_horizontal.setPower(power_motor_horizontal_initialization);
+		if(id == 1){
+			motor_horizontal.setPower(power_motor_horizontal_initialization_1);
+		}
+		else if(id == 2){
+			motor_horizontal.setPower(power_motor_horizontal_initialization_2);
+		}
 		
 		coords_places_horizontal.put(places_horizontal.get(0), getLeftRightDistance());
 		LCD.drawString(places_horizontal.get(0) + coords_places_horizontal.get(places_horizontal.get(0)), 0, 0);
