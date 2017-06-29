@@ -471,7 +471,7 @@ public class Robot {
 	 */
 	public void moveToDischargeChute(){
 		Sound.playTone(1000, 150);
-		Sound.playTone(100, 850);
+		Sound.playTone(100, 750);
 		moveToCoordinate(coords_places_horizontal.get("dischargeChute"));
 	}
 	
@@ -505,11 +505,6 @@ public class Robot {
 	 * Moves to its out of order place (outOfOrderPlace_1 if id=1, outOfOrderPlace_2 if id=2)
 	 */
 	public void moveToOOOPlace(){
-		Sound.playTone(100, 800);
-		Delay.msDelay(200);
-		Sound.playTone(100, 800);
-		Delay.msDelay(200);
-		Sound.playTone(100, 800);
 		moveToCoordinate(coords_places_horizontal.get("outOfOrderPlace_" + id));
 	}
 	
@@ -519,7 +514,7 @@ public class Robot {
 	 */
 	public void moveToStorageLocation(int storageNumb){
 		Sound.playTone(100, 150);
-		Sound.playTone(1000, 850);
+		Sound.playTone(1000, 750);
 		moveToCoordinate(coords_places_horizontal.get("storageLocation_" + (storageNumb + 1)));
 	}
 	
@@ -621,6 +616,13 @@ public class Robot {
 		if(randomFailureEnabled & (randomGenerator.nextInt() % 10 == 4)){
 			currentStatus = STATUS_FAILED;
 			stopCommunication();
+			
+			Sound.playTone(100, 800);
+			Delay.msDelay(200);
+			Sound.playTone(100, 800);
+			Delay.msDelay(200);
+			Sound.playTone(100, 800);
+			
 			moveToOOOPlace();
 			Delay.msDelay(delay_restartCommunicationAfterFailure);
 			restartCommunication();
