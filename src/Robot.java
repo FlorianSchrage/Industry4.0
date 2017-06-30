@@ -620,6 +620,7 @@ public class Robot {
 	 */
 	public void moveToOOOPlace(){
 		moveToDrivingPosition();
+		release();
 		moveToCoordinate(coords_places_horizontal.get("outOfOrderPlace_" + id));
 	}
 	
@@ -708,7 +709,7 @@ public class Robot {
 	}
 	
 	/**
-	 * Interprets a given JSON String as an action. If randomFailureEnabled is set true, then the robot will fail with a probability of 10% and won't interpret the given JSON String.
+	 * Interprets a given JSON String as an action. If randomFailureEnabled is set true, then the robot will fail with a probability of 2.5% (1 out of 40 times) after interpreting the given JSON String.
 	 * @param json JSON String containing an action and optionally a value.
 	 */
 	public void interpretJsonString(String json){
@@ -740,7 +741,7 @@ public class Robot {
 		   default: throw new IllegalStateException("Action not recognized. Given action: " + action);
 		}
 		
-		if(randomFailureEnabled & (randomGenerator.nextInt() % 10 == 4)){
+		if(randomFailureEnabled & (randomGenerator.nextInt() % 40 == 4)){
 			simulateFailure();
 		}
 	}
