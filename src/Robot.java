@@ -365,12 +365,7 @@ public class Robot {
 		FailThread fail = new FailThread(this, sender, receiver, delay_restartCommunicationAfterFailure);
 		fail.setPriority(Thread.MAX_PRIORITY);
 		fail.start();
-		
-		Sound.playTone(100, 800);
-		Delay.msDelay(200);
-		Sound.playTone(100, 800);
-		Delay.msDelay(200);
-		Sound.playTone(100, 800);
+		playSound("FAIL");
 	}
 	
 	/**
@@ -390,6 +385,66 @@ public class Robot {
 		provider_color_initialize.fetchSample(sample_color_initialize, 0);
 		return (int)sample_color_initialize[0];
 	}
+	
+	/**
+	 * Plays a sound based on the given event.
+	 * @param event String that determines the event.
+	 */
+	private void playSound(String event){
+		switch(event){
+		case "FAIL": 
+			Sound.playTone(100, 800);
+			Delay.msDelay(200);
+			Sound.playTone(100, 800);
+			Delay.msDelay(200);
+			Sound.playTone(100, 800);
+			break;
+		case "MOVE_TO_DELIVERY_PLACE":
+			Sound.playTone(200, 100);
+			Sound.playTone(300, 100);
+			Sound.playTone(400, 100);
+			Sound.playTone(500, 100);
+			Sound.playTone(600, 100);
+			break;
+		case "MOVE_TO_DISCHARGE_CHUTE":
+			Sound.playTone(1000, 150);
+			Sound.playTone(100, 750);
+			break;
+		case "MOVE_TO_BUILDING_SITE":
+			Sound.playTone(700, 100);
+			Sound.playTone(800, 100);
+			Sound.playTone(900, 100);
+			Sound.playTone(1000, 100);
+			Sound.playTone(1100, 100);
+			break;
+		case "MOVE_TO_SOURCE":
+			Sound.playTone(1000, 300);
+			break;
+		case "MOVE_TO_STORAGE_LOCATION":
+			Sound.playTone(100, 150);
+			Sound.playTone(1000, 750);
+			break;
+		case "COMMUNICATION_RESTART":
+			Sound.playTone(200, 100);
+			Sound.playTone(300, 100);
+			Sound.playTone(400, 100);
+			Sound.playTone(500, 100);
+			Sound.playTone(600, 100);
+			Sound.playTone(700, 100);
+			Sound.playTone(800, 100);
+			Sound.playTone(900, 100);
+			Sound.playTone(1000, 100);
+			Sound.playTone(1100, 100);
+			Sound.playTone(1200, 100);
+			Sound.playTone(1300, 100);
+			Sound.playTone(1400, 100);
+			Sound.playTone(1500, 100);
+		}		
+	}
+	
+	// ---------------------- MAIN FUNCTIONS ----------------------
+	
+	// ----- Initialization Methods -----
 	
 	/**
 	 * Initializes variables with information from the properties file.
@@ -431,6 +486,29 @@ public class Robot {
 	}
 	
 	/**
+	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the sorting robot.
+	 */
+	public void initializeSortRobot(){
+		currentStatus = STATUS_INITIALIZING;
+		id = 1;
+		position = "RIGHT";
+		initializehorizontalPlaceCoordinates();
+		currentStatus = STATUS_IDLE;
+	}
+	
+	/**
+	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the building robot.
+	 */
+	public void initializeBuildRobot(){
+		currentStatus = STATUS_INITIALIZING;
+		id = 2;
+		position = "LEFT";
+		Collections.reverse(places_horizontal);
+		initializehorizontalPlaceCoordinates();
+		currentStatus = STATUS_IDLE;
+	}
+	
+	/**
 	 * Initializes the horizontal place coordinates by scanning the environment for places.
 	 */
 	private void initializehorizontalPlaceCoordinates(){
@@ -460,33 +538,6 @@ public class Robot {
 		}
 		moveToDrivingPosition();
 		moveToOOOPlace();
-	}
-	
-	// ---------------------- MAIN FUNCTIONS ----------------------
-	
-	// ----- Initialization Methods -----
-	
-	/**
-	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the sorting robot.
-	 */
-	public void initializeSortRobot(){
-		currentStatus = STATUS_INITIALIZING;
-		id = 1;
-		position = "RIGHT";
-		initializehorizontalPlaceCoordinates();
-		currentStatus = STATUS_IDLE;
-	}
-	
-	/**
-	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the building robot.
-	 */
-	public void initializeBuildRobot(){
-		currentStatus = STATUS_INITIALIZING;
-		id = 2;
-		position = "LEFT";
-		Collections.reverse(places_horizontal);
-		initializehorizontalPlaceCoordinates();
-		currentStatus = STATUS_IDLE;
 	}
 	
 	// ----- Getter Methods -----
@@ -529,11 +580,7 @@ public class Robot {
 	 * Moves to the delivery place.
 	 */
 	public void moveToDeliveryPlace(){
-		Sound.playTone(200, 100);
-		Sound.playTone(300, 100);
-		Sound.playTone(400, 100);
-		Sound.playTone(500, 100);
-		Sound.playTone(600, 100);
+		playSound("MOVE_TO_DELIVERY_PLACE");
 		moveToCoordinate(coords_places_horizontal.get("deliveryPlace"));
 	}
 	
@@ -541,8 +588,7 @@ public class Robot {
 	 * Moves to the discharge chute.
 	 */
 	public void moveToDischargeChute(){
-		Sound.playTone(1000, 150);
-		Sound.playTone(100, 750);
+		playSound("MOVE_TO_DISCHARGE_CHUTE");
 		moveToCoordinate(coords_places_horizontal.get("dischargeChute"));
 	}
 	
@@ -551,11 +597,7 @@ public class Robot {
 	 * @param number of row to which the robot should move.
 	 */
 	public void moveToBuildingSite(int row){
-		Sound.playTone(700, 100);
-		Sound.playTone(800, 100);
-		Sound.playTone(900, 100);
-		Sound.playTone(1000, 100);
-		Sound.playTone(1100, 100);
+		playSound("MOVE_TO_BUILDING_SITE");
 		if(id == 1){
 			moveToCoordinate(coords_places_horizontal.get("buildingSite") - (float)(row * buildingSite_width));
 		}
@@ -568,7 +610,7 @@ public class Robot {
 	 * Moves to the source.
 	 */
 	public void moveToSource(){
-		Sound.playTone(1000, 300);
+		playSound("MOVE_TO_SOURCE");
 		moveToCoordinate(coords_places_horizontal.get("source"));
 	}
 	
@@ -585,8 +627,7 @@ public class Robot {
 	 * @param storageNumb indicates the number of the storage location
 	 */
 	public void moveToStorageLocation(int storageNumb){
-		Sound.playTone(100, 150);
-		Sound.playTone(1000, 750);
+		playSound("MOVE_TO_STORAGE_LOCATION");
 		moveToCoordinate(coords_places_horizontal.get("storageLocation_" + (storageNumb + 1)));
 	}
 	
@@ -640,21 +681,6 @@ public class Robot {
 		motor_robotHand.stop();
 		currentStatus = STATUS_IDLE;
 	}
-	
-	/**
-	 * Closes the hand and moves the hand down to the ground to press a brick against the ground.
-	 */
-	public void pressTight(){
-		currentStatus = STATUS_GRABBING;
-		motor_robotHand.setPower(50);
-		motor_robotHand.forward();
-		Delay.msDelay(2500);
-		motor_robotHand.stop();
-		motor_vertical.setPower(100);
-		moveUpDown((float)0.039);
-		Delay.msDelay(2000);
-		currentStatus = STATUS_IDLE;
-	}
 
 	/**
 	 * Scans the current brick which is located below the robot hand and sets the color as currentBrickColor.
@@ -700,7 +726,7 @@ public class Robot {
 		switch(action){
 		   case "GRAB": grab(); break;
 		   case "RELEASE": release(); break;
-		   case "PRESS_TIGHT": pressTight(); break;
+//		   case "PRESS_TIGHT": pressTight(); break;
 		   case "MOVE_TO_DELIVERY_PLACE": moveToDeliveryPlace(); break;
 		   case "MOVE_TO_DISCHARGE_CHUTE": moveToDischargeChute(); break;
 		   case "MOVE_TO_DRIVING_POSITION": moveToDrivingPosition(); break;
@@ -767,76 +793,81 @@ public class Robot {
 		receiver.start();
 		print("Threads restarted");
 		currentStatus = STATUS_IDLE;
-		Sound.playTone(200, 100);
-		Sound.playTone(300, 100);
-		Sound.playTone(400, 100);
-		Sound.playTone(500, 100);
-		Sound.playTone(600, 100);
-		Sound.playTone(700, 100);
-		Sound.playTone(800, 100);
-		Sound.playTone(900, 100);
-		Sound.playTone(1000, 100);
-		Sound.playTone(1100, 100);
-		Sound.playTone(1200, 100);
-		Sound.playTone(1300, 100);
-		Sound.playTone(1400, 100);
-		Sound.playTone(1500, 100);
+		playSound("COMMUNICATION_RESTART");
 	}
 	
 	
-//	private int getMajorityVotedBrickColor(){
-//	for(int i=0; i<=1; i++){
-//		provider_color_brick.fetchSample(sample_color_brick, i);
-//	}
-//	HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
-//	for(int i=0; i<sample_color_brick.length; i++){
-//		int currentCandidate = (int)sample_color_brick[i];
-//		if(candidates.containsKey(currentCandidate)){
-//			candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
-//		}
-//		else{
-//			candidates.put(currentCandidate, 1);
-//		}
-//	}
-//	
-//	int maxValue = -1;
-//	int colorWithMaxValue = -1;
-//	Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
-//	while (it.hasNext()) {
-//	    Entry<Integer, Integer> entry = it.next();
-//	    if(entry.getValue() > maxValue){
-//	    	maxValue = entry.getValue();
-//	    	colorWithMaxValue = entry.getKey();
-//	    }
-//	}		
-//	return colorWithMaxValue
-//}
+/*
 	
-//	private int getMajorityVotedInitializationColor(){
-//	for(int i=0; i<=1; i++){
-//		provider_color_initialize.fetchSample(sample_color_initialize, i);
-//	}
-//	HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
-//	for(int i=0; i<sample_color_initialize.length; i++){
-//		int currentCandidate = (int)sample_color_initialize[i];
-//		if(candidates.containsKey(currentCandidate)){
-//			candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
-//		}
-//		else{
-//			candidates.put(currentCandidate, 1);
-//		}
-//	}
-//	
-//	int maxValue = -1;
-//	int colorWithMaxValue = -1;
-//	Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
-//	while (it.hasNext()) {
-//	    Entry<Integer, Integer> entry = it.next();
-//	    if(entry.getValue() > maxValue){
-//	    	maxValue = entry.getValue();
-//	    	colorWithMaxValue = entry.getKey();
-//	    }
-//	}
-//	return colorWithMaxValue;
-//}
+	// Closes the hand and moves the hand down to the ground to press a brick against the ground.
+	public void pressTight(){
+		currentStatus = STATUS_GRABBING;
+		motor_robotHand.setPower(50);
+		motor_robotHand.forward();
+		Delay.msDelay(2500);
+		motor_robotHand.stop();
+		motor_vertical.setPower(100);
+		moveUpDown((float)0.039);
+		Delay.msDelay(2000);
+		currentStatus = STATUS_IDLE;
+	}
+	
+	// Reads the brick color sensor multiple times and performs a majority vote to determine the correct value.
+	private int getMajorityVotedBrickColor(){
+	for(int i=0; i<=1; i++){
+		provider_color_brick.fetchSample(sample_color_brick, i);
+	}
+	HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
+	for(int i=0; i<sample_color_brick.length; i++){
+		int currentCandidate = (int)sample_color_brick[i];
+		if(candidates.containsKey(currentCandidate)){
+			candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
+		}
+		else{
+			candidates.put(currentCandidate, 1);
+		}
+	}
+	
+	int maxValue = -1;
+	int colorWithMaxValue = -1;
+	Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
+	while (it.hasNext()) {
+	    Entry<Integer, Integer> entry = it.next();
+	    if(entry.getValue() > maxValue){
+	    	maxValue = entry.getValue();
+	    	colorWithMaxValue = entry.getKey();
+	    }
+	}		
+	return colorWithMaxValue
+}
+	
+	// Reads the initialization color sensor multiple times and performs a majority vote to determine the correct value.
+	private int getMajorityVotedInitializationColor(){
+	for(int i=0; i<=1; i++){
+		provider_color_initialize.fetchSample(sample_color_initialize, i);
+	}
+	HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
+	for(int i=0; i<sample_color_initialize.length; i++){
+		int currentCandidate = (int)sample_color_initialize[i];
+		if(candidates.containsKey(currentCandidate)){
+			candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
+		}
+		else{
+			candidates.put(currentCandidate, 1);
+		}
+	}
+	
+	int maxValue = -1;
+	int colorWithMaxValue = -1;
+	Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
+	while (it.hasNext()) {
+	    Entry<Integer, Integer> entry = it.next();
+	    if(entry.getValue() > maxValue){
+	    	maxValue = entry.getValue();
+	    	colorWithMaxValue = entry.getKey();
+	    }
+	}
+	return colorWithMaxValue;
+}
+*/
 }
