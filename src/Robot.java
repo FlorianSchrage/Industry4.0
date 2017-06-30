@@ -82,6 +82,7 @@ public class Robot {
 	// Simulated Failure:
 	private Random randomGenerator = new Random();
 	private boolean randomFailureEnabled;
+	private int randomFailure_parameter;
 	
 	// User defined properties:
 	private Properties properties_userDefined = new Properties();
@@ -468,7 +469,9 @@ public class Robot {
 		ip_local_robot_right = properties_userDefined.getProperty("ip_local_robot_right");
 		ip_local_robot_left = properties_userDefined.getProperty("ip_local_robot_left");
 		debug_mode = Boolean.valueOf(properties_userDefined.getProperty("debug_mode"));
+		
 		randomFailureEnabled = Boolean.valueOf(properties_userDefined.getProperty("randomFailureEnabled"));
+		randomFailure_parameter = Integer.valueOf(properties_userDefined.getProperty("randomFailure_parameter"));
 		
 		power_motor_horizontal_initialization_1 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization_1"));
 		power_motor_horizontal_initialization_2 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization_2"));
@@ -709,7 +712,7 @@ public class Robot {
 	}
 	
 	/**
-	 * Interprets a given JSON String as an action. If randomFailureEnabled is set true, then the robot will fail with a probability of 2.5% (1 out of 40 times) after interpreting the given JSON String.
+	 * Interprets a given JSON String as an action. If randomFailureEnabled is set true, then the robot will fail with a probability based on randomFailure_parameter (1 out of randomFailure_parameter times) after interpreting the given JSON String.
 	 * @param json JSON String containing an action and optionally a value.
 	 */
 	public void interpretJsonString(String json){
@@ -741,7 +744,7 @@ public class Robot {
 		   default: throw new IllegalStateException("Action not recognized. Given action: " + action);
 		}
 		
-		if(randomFailureEnabled & (randomGenerator.nextInt() % 40 == 4)){
+		if(randomFailureEnabled & (randomGenerator.nextInt() % randomFailure_parameter == 4)){
 			simulateFailure();
 		}
 	}
