@@ -132,11 +132,11 @@ public class Robot {
 		
 	private final SampleProvider provider_color_brick = sensor_color_brick.getColorIDMode();
 	//private float[] sample_color_brick = new float[provider_color_brick.sampleSize()];
-	private float[] sample_color_brick = new float[200];
+	private float[] sample_color_brick = new float[20000];
 		
 	private final SampleProvider provider_color_initialize = sensor_color_initialize.getColorIDMode();
 	//private float[] sample_color_initialize = new float[provider_color_initialize.sampleSize()];
-	private float[] sample_color_initialize = new float[200];
+	private float[] sample_color_initialize = new float[20000];
 	
 	// Local IPs
 	private String ip_local_robot_right;
@@ -375,7 +375,7 @@ public class Robot {
 	}
 
 	private int getMajorityVotedBrickColor(){
-		for(int i=0; i<=100; i++){
+		for(int i=0; i<=10000; i++){
 			provider_color_brick.fetchSample(sample_color_brick, i);
 		}
 		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
@@ -403,7 +403,7 @@ public class Robot {
 	}
 	
 	private int getMajorityVotedInitializationColor(){
-		for(int i=0; i<=100; i++){
+		for(int i=0; i<=10000; i++){
 			provider_color_initialize.fetchSample(sample_color_initialize, i);
 		}
 		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
@@ -722,38 +722,36 @@ public class Robot {
 	 * @param json JSON String containing an action and optionally a value.
 	 */
 	public void interpretJsonString(String json){
+		String action = "";
+		for(int i=0; i<actions.length; i++){
+			if(json.contains(actions[i])){
+				action = actions[i];
+			}
+		}
+		
+		int number = -1;
+		if(action.equals( "MOVE_TO_BUILDING_SITE") || action.equals("MOVE_TO_STORAGE_LOCATION") || action.equals("MOVE_TO_BUILDING_POSITION")){
+			number = Integer.valueOf(json.substring(11).replaceAll("[^0-9]+", ""));
+		}
+		
+		switch(action){
+		   case "GRAB": grab(); break;
+		   case "RELEASE": release(); break;
+		   case "PRESS_TIGHT": pressTight(); break;
+		   case "MOVE_TO_DELIVERY_PLACE": moveToDeliveryPlace(); break;
+		   case "MOVE_TO_DISCHARGE_CHUTE": moveToDischargeChute(); break;
+		   case "MOVE_TO_DRIVING_POSITION": moveToDrivingPosition(); break;
+		   case "MOVE_TO_GRIPPING_POSITION": moveToGrippingPosition(); break;
+		   case "MOVE_TO_BUILDING_SITE": moveToBuildingSite(number); break;			
+		   case "MOVE_TO_STORAGE_LOCATION": moveToStorageLocation(number); break;		
+		   case "MOVE_TO_BUILDING_POSITION": moveToBuildingPosition(number); break;	
+		   case "MOVE_TO_SOURCE": moveToSource(); break;
+		   case "MOVE_TO_OOO_PLACE": moveToOOOPlace(); break;
+		   default: throw new IllegalStateException("Action not recognized. Given action: " + action);
+		}
+		
 		if(randomFailureEnabled & (randomGenerator.nextInt() % 10 == 4)){
 			simulateFailure();
-		}
-		else{
-			String action = "";
-			
-			for(int i=0; i<actions.length; i++){
-				if(json.contains(actions[i])){
-					action = actions[i];
-				}
-			}
-			
-			int number = -1;
-			if(action.equals( "MOVE_TO_BUILDING_SITE") || action.equals("MOVE_TO_STORAGE_LOCATION") || action.equals("MOVE_TO_BUILDING_POSITION")){
-				number = Integer.valueOf(json.substring(11).replaceAll("[^0-9]+", ""));
-			}
-			
-			switch(action){
-			   case "GRAB": grab(); break;
-			   case "RELEASE": release(); break;
-			   case "PRESS_TIGHT": pressTight(); break;
-			   case "MOVE_TO_DELIVERY_PLACE": moveToDeliveryPlace(); break;
-			   case "MOVE_TO_DISCHARGE_CHUTE": moveToDischargeChute(); break;
-			   case "MOVE_TO_DRIVING_POSITION": moveToDrivingPosition(); break;
-			   case "MOVE_TO_GRIPPING_POSITION": moveToGrippingPosition(); break;
-			   case "MOVE_TO_BUILDING_SITE": moveToBuildingSite(number); break;			
-			   case "MOVE_TO_STORAGE_LOCATION": moveToStorageLocation(number); break;		
-			   case "MOVE_TO_BUILDING_POSITION": moveToBuildingPosition(number); break;	
-			   case "MOVE_TO_SOURCE": moveToSource(); break;
-			   case "MOVE_TO_OOO_PLACE": moveToOOOPlace(); break;
-			   default: throw new IllegalStateException("Action not recognized. Given action: " + action);
-			}
 		}
 	}
 	
