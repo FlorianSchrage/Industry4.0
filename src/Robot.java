@@ -131,10 +131,12 @@ public class Robot {
 	private float[] sample_distance_vertical = new float[provider_distance_horizontal.sampleSize()];
 		
 	private final SampleProvider provider_color_brick = sensor_color_brick.getColorIDMode();
-	private float[] sample_color_brick = new float[provider_color_brick.sampleSize()];
+	//private float[] sample_color_brick = new float[provider_color_brick.sampleSize()];
+	private float[] sample_color_brick = new float[200];
 		
 	private final SampleProvider provider_color_initialize = sensor_color_initialize.getColorIDMode();
-	private float[] sample_color_initialize = new float[provider_color_initialize.sampleSize()];
+	//private float[] sample_color_initialize = new float[provider_color_initialize.sampleSize()];
+	private float[] sample_color_initialize = new float[200];
 	
 	// Local IPs
 	private String ip_local_robot_right;
