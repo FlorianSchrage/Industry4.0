@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.Semaphore;
 
 public class ReceiverThread extends Thread
@@ -21,6 +22,7 @@ public class ReceiverThread extends Thread
 		this.sema = sema;
 		try {
 			server = new ServerSocket(PORT);
+			server.setSoTimeout(20000);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -39,7 +41,14 @@ public class ReceiverThread extends Thread
 			try
 			{
 				apiRef.print("Receiver starting");
-				socket = server.accept();
+				try
+				{
+					socket = server.accept();
+				} catch (SocketTimeoutException e)
+				{
+					apiRef.print("Receiver Timeout");
+					continue;
+				}
 				networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				apiRef.print("Socket (R) opened");
 				apiRef.print("IP: " + socket.getLocalAddress().getHostAddress());
@@ -57,7 +66,9 @@ public class ReceiverThread extends Thread
 					{
 						e.printStackTrace();
 					}
-					apiRef.interpretJsonString(line);
+					
+					if(running)
+						apiRef.interpretJsonString(line);
 					sema.release();
 				}
 

@@ -145,7 +145,7 @@ public class Robot {
 	
 	private SenderThread sender;
 	private ReceiverThread receiver;
-//	private Socket socket;
+	Semaphore semaphore;
 	
 	public static void main(String[] args) {
 		Sound.setVolume(5);
@@ -172,10 +172,10 @@ public class Robot {
 			throw new IllegalStateException("Local robot ip does not match an user defined robot ip. Given local ip: " + getAddress());
 		}
 		
-		Semaphore sema = new Semaphore(1);
+		semaphore = new Semaphore(1);
 		
-		sender = new SenderThread(this, sema, delay_initialize, delay_sending);
-		receiver = new ReceiverThread(this, sema);
+		sender = new SenderThread(this, semaphore, delay_initialize, delay_sending);
+		receiver = new ReceiverThread(this, semaphore);
 		
 		sender.start();
 		receiver.start();
@@ -357,23 +357,20 @@ public class Robot {
 	/**
 	 * Simulates a random failure.
 	 * The failed robot will stop the communication, move to the out of order place and restarts the communication after waiting for some time.
+	 * A separate thread is used that waits for sender and receiver threads to stop
 	 */
 	private void simulateFailure(){
 		currentStatus = STATUS_FAILED;
-		stopCommunication();
+		FailThread fail = new FailThread(this, sender, receiver, delay_restartCommunicationAfterFailure);
+		fail.start();
 		
 		Sound.playTone(100, 800);
 		Delay.msDelay(200);
 		Sound.playTone(100, 800);
 		Delay.msDelay(200);
 		Sound.playTone(100, 800);
-		
-		moveToOOOPlace();
-		Delay.msDelay(delay_restartCommunicationAfterFailure);
-		restartCommunication();
-		currentStatus = STATUS_IDLE;
 	}
-	
+
 	/**
 	 * Initializes variables with information from the properties file.
 	 */
@@ -735,45 +732,34 @@ public class Robot {
 	}
 	
 	/**
-	 * Stops the communication by terminating the sender and receiver threads.
+	 * Restarts the communication by setting up and starting new sender and receiver threads.
 	 */
-	private void stopCommunication()
-	{
-		print("Stopping Communication");
-		sender.terminate();
-		try
-		{
-			sender.join();
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		print("Sender terminated");
-		receiver.terminate();
-		try
-		{
-			receiver.join();
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		print("Receiver terminated");
-	}
-	
-	/**
-	 * Restarts the communication by setting up and starting a sender and receiver thread.
-	 */
-	private void restartCommunication()
+	public void restartCommunication()
 	{
 		print("Restarting Communication");
-		Semaphore sema = new Semaphore(1);
+		semaphore = new Semaphore(1);
 		
-		sender = new SenderThread(this, sema, delay_initialize, delay_sending);
-		receiver = new ReceiverThread(this, sema);
+		sender = new SenderThread(this, semaphore, delay_initialize, delay_sending);
+		receiver = new ReceiverThread(this, semaphore);
 		
 		sender.start();
 		receiver.start();
 		print("Threads restarted");
+		currentStatus = STATUS_IDLE;
+		Sound.playTone(200, 100);
+		Sound.playTone(300, 100);
+		Sound.playTone(400, 100);
+		Sound.playTone(500, 100);
+		Sound.playTone(600, 100);
+		Sound.playTone(700, 100);
+		Sound.playTone(800, 100);
+		Sound.playTone(900, 100);
+		Sound.playTone(1000, 100);
+		Sound.playTone(1100, 100);
+		Sound.playTone(1200, 100);
+		Sound.playTone(1300, 100);
+		Sound.playTone(1400, 100);
+		Sound.playTone(1500, 100);
 	}
 	
 	// ---------------------- ONLY FOR TESTING! ----------------------
