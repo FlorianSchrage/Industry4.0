@@ -253,10 +253,10 @@ public class Robot {
 	 * @return the horizontal distance of the determined point of interest.
 	 */
 	private float returnNextPointOfInterestCoord(){
-		float firstColor = getMajorityVotedInitializationColor();
+		float firstColor = readInitializationColorSensor();
 		while(true){
 			moveToInitializingPosition();
-			int currentColor = getMajorityVotedInitializationColor();
+			int currentColor = readInitializationColorSensor();
 			if(firstColor != currentColor && (currentColor == color_initialization_1 || currentColor == color_initialization_2)){
 				motor_horizontal.stop();
 				currentStatus = STATUS_IDLE;
@@ -372,65 +372,21 @@ public class Robot {
 		Delay.msDelay(200);
 		Sound.playTone(100, 800);
 	}
-
-	private int getMajorityVotedBrickColor(){
-//		for(int i=0; i<=1; i++){
-//			provider_color_brick.fetchSample(sample_color_brick, i);
-//		}
-//		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
-//		for(int i=0; i<sample_color_brick.length; i++){
-//			int currentCandidate = (int)sample_color_brick[i];
-//			if(candidates.containsKey(currentCandidate)){
-//				candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
-//			}
-//			else{
-//				candidates.put(currentCandidate, 1);
-//			}
-//		}
-//		
-//		int maxValue = -1;
-//		int colorWithMaxValue = -1;
-//		Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
-//		while (it.hasNext()) {
-//		    Entry<Integer, Integer> entry = it.next();
-//		    if(entry.getValue() > maxValue){
-//		    	maxValue = entry.getValue();
-//		    	colorWithMaxValue = entry.getKey();
-//		    }
-//		}
-		
+	
+	/**
+	 * Reads, stores and returns the current color id of the brick color sensor.
+	 * @return current read color id of brick color sensor.
+	 */
+	private int readBrickColorSensor(){
 		provider_color_brick.fetchSample(sample_color_brick, 0);
-		
 		return (int)sample_color_brick[0];
 	}
 	
-	private int getMajorityVotedInitializationColor(){
-//		for(int i=0; i<=1; i++){
-//			provider_color_initialize.fetchSample(sample_color_initialize, i);
-//		}
-//		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
-//		for(int i=0; i<sample_color_initialize.length; i++){
-//			int currentCandidate = (int)sample_color_initialize[i];
-//			if(candidates.containsKey(currentCandidate)){
-//				candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
-//			}
-//			else{
-//				candidates.put(currentCandidate, 1);
-//			}
-//		}
-//		
-//		int maxValue = -1;
-//		int colorWithMaxValue = -1;
-//		Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
-//		while (it.hasNext()) {
-//		    Entry<Integer, Integer> entry = it.next();
-//		    if(entry.getValue() > maxValue){
-//		    	maxValue = entry.getValue();
-//		    	colorWithMaxValue = entry.getKey();
-//		    }
-//		}
-//		return colorWithMaxValue;
-		
+	/**
+	 * Reads, stores and returns the current color id of the initialization color sensor.
+	 * @return current read color id of initialization color sensor.
+	 */
+	private int readInitializationColorSensor(){
 		provider_color_initialize.fetchSample(sample_color_initialize, 0);
 		return (int)sample_color_initialize[0];
 	}
@@ -704,7 +660,7 @@ public class Robot {
 	 * Scans the current brick which is located below the robot hand and sets the color as currentBrickColor.
 	 */
 	public void setCurrentBrickColor(){
-		int currentColor = getMajorityVotedBrickColor();
+		int currentColor = readBrickColorSensor();
 		if(0 <= currentColor && currentColor <= 13){
 			currentBrickColor = colors.get(currentColor);
 		}
@@ -827,15 +783,60 @@ public class Robot {
 		Sound.playTone(1500, 100);
 	}
 	
-	// ---------------------- ONLY FOR TESTING! ----------------------
 	
-	private void write(){
-		LCD.clearDisplay();
-		LCD.drawString(" " + coords_places_horizontal.get("deliveryPlace"), 0, 0);
-	}
+//	private int getMajorityVotedBrickColor(){
+//	for(int i=0; i<=1; i++){
+//		provider_color_brick.fetchSample(sample_color_brick, i);
+//	}
+//	HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
+//	for(int i=0; i<sample_color_brick.length; i++){
+//		int currentCandidate = (int)sample_color_brick[i];
+//		if(candidates.containsKey(currentCandidate)){
+//			candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
+//		}
+//		else{
+//			candidates.put(currentCandidate, 1);
+//		}
+//	}
+//	
+//	int maxValue = -1;
+//	int colorWithMaxValue = -1;
+//	Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
+//	while (it.hasNext()) {
+//	    Entry<Integer, Integer> entry = it.next();
+//	    if(entry.getValue() > maxValue){
+//	    	maxValue = entry.getValue();
+//	    	colorWithMaxValue = entry.getKey();
+//	    }
+//	}		
+//	return colorWithMaxValue
+//}
 	
-	private void write2(){
-		LCD.clearDisplay();
-		LCD.drawString(" " + coords_places_horizontal.get("dischargeChute"), 0, 0);
-	}
+//	private int getMajorityVotedInitializationColor(){
+//	for(int i=0; i<=1; i++){
+//		provider_color_initialize.fetchSample(sample_color_initialize, i);
+//	}
+//	HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
+//	for(int i=0; i<sample_color_initialize.length; i++){
+//		int currentCandidate = (int)sample_color_initialize[i];
+//		if(candidates.containsKey(currentCandidate)){
+//			candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
+//		}
+//		else{
+//			candidates.put(currentCandidate, 1);
+//		}
+//	}
+//	
+//	int maxValue = -1;
+//	int colorWithMaxValue = -1;
+//	Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
+//	while (it.hasNext()) {
+//	    Entry<Integer, Integer> entry = it.next();
+//	    if(entry.getValue() > maxValue){
+//	    	maxValue = entry.getValue();
+//	    	colorWithMaxValue = entry.getKey();
+//	    }
+//	}
+//	return colorWithMaxValue;
+//}
 }
