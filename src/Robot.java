@@ -253,12 +253,11 @@ public class Robot {
 	 * @return the horizontal distance of the determined point of interest.
 	 */
 	private float returnNextPointOfInterestCoord(){
-		provider_color_initialize.fetchSample(sample_color_initialize, 0);
-		float firstColor = sample_color_initialize[0];
+		float firstColor = getMajorityVotedInitializationColor();
 		while(true){
-			moveToInitializingPosition(); // added just to check
-			provider_color_initialize.fetchSample(sample_color_initialize, 0);
-			if(firstColor != sample_color_initialize[0] && (sample_color_initialize[0] == color_initialization_1 || sample_color_initialize[0] == color_initialization_2)){
+			moveToInitializingPosition();
+			int currentColor = getMajorityVotedInitializationColor();
+			if(firstColor != currentColor && (currentColor == color_initialization_1 || currentColor == color_initialization_2)){
 				motor_horizontal.stop();
 				currentStatus = STATUS_IDLE;
 				break;
@@ -380,6 +379,34 @@ public class Robot {
 		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
 		for(int i=0; i<sample_color_brick.length; i++){
 			int currentCandidate = (int)sample_color_brick[i];
+			if(candidates.containsKey(currentCandidate)){
+				candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
+			}
+			else{
+				candidates.put(currentCandidate, 1);
+			}
+		}
+		
+		int maxValue = -1;
+		int colorWithMaxValue = -1;
+		Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
+		while (it.hasNext()) {
+		    Entry<Integer, Integer> entry = it.next();
+		    if(entry.getValue() > maxValue){
+		    	maxValue = entry.getValue();
+		    	colorWithMaxValue = entry.getKey();
+		    }
+		}
+		return colorWithMaxValue;
+	}
+	
+	private int getMajorityVotedInitializationColor(){
+		for(int i=0; i<=100; i++){
+			provider_color_initialize.fetchSample(sample_color_initialize, i);
+		}
+		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
+		for(int i=0; i<sample_color_initialize.length; i++){
+			int currentCandidate = (int)sample_color_initialize[i];
 			if(candidates.containsKey(currentCandidate)){
 				candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
 			}
