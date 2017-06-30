@@ -256,6 +256,13 @@ public class Robot {
 	 */
 	private float returnNextPointOfInterestCoord(){
 		float firstColor = getMajorityVotedInitializationColor();
+		if(id == 1){
+			motor_horizontal.setPower(power_motor_horizontal_initialization_1);
+		}
+		else if(id == 2){
+			motor_horizontal.setPower(power_motor_horizontal_initialization_2);
+		}
+		
 		while(true){
 			moveToInitializingPosition();
 			int currentColor = getMajorityVotedInitializationColor();
@@ -475,20 +482,24 @@ public class Robot {
 	private void initializehorizontalPlaceCoordinates(){
 		moveToInitializingPosition();
 		release();
+		
+		coords_places_horizontal.put(places_horizontal.get(0), getLeftRightDistance());
+		LCD.drawString(places_horizontal.get(0) + coords_places_horizontal.get(places_horizontal.get(0)), 0, 0);
+		/*
 		if(id == 1){
 			motor_horizontal.setPower(power_motor_horizontal_initialization_1);
 		}
 		else if(id == 2){
 			motor_horizontal.setPower(power_motor_horizontal_initialization_2);
 		}
+		*/
 		
-		coords_places_horizontal.put(places_horizontal.get(0), getLeftRightDistance());
-		LCD.drawString(places_horizontal.get(0) + coords_places_horizontal.get(places_horizontal.get(0)), 0, 0);
 		for(int i=1; i<places_horizontal.size()-1; i++){
 			coords_places_horizontal.put(places_horizontal.get(i), returnNextPointOfInterestCoord());
 			LCD.clearDisplay();
 			LCD.drawString(coords_places_horizontal.get(places_horizontal.get(i)) + places_horizontal.get(i), 0, 0);
 		}
+		
 		if(id == 1){
 			motor_horizontal.setPower(power_motor_horizontal_1);
 		}
