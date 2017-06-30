@@ -84,8 +84,8 @@ public class Robot {
 	private boolean randomFailureEnabled;
 	private int randomFailure_parameter;
 	
-	// User defined properties:
-	private Properties properties_userDefined = new Properties();
+	// Predefined Properties from Properties File:
+	private Properties properties = new Properties();
 		
 	// Vertical Coordinates:
 	private float height_initializingPosition_1;
@@ -142,9 +142,7 @@ public class Robot {
 	
 	// Communication
 	public static String ip_host;
-	private boolean debug_mode;
-//	private static final int PORT = 12345;
-	
+	private boolean debug_mode;	
 	private SenderThread sender;
 	private ReceiverThread receiver;
 	Semaphore semaphore;
@@ -175,7 +173,7 @@ public class Robot {
     		    return;
     		}
 
-    		properties_userDefined.load(input);
+    		properties.load(input);
 
     	} catch (IOException ex) {
     		ex.printStackTrace();
@@ -454,39 +452,39 @@ public class Robot {
 	private void initializePropertiesBasedVariables(){
 		readProperties();
 
-		color_initialization_1 = colors.indexOf(properties_userDefined.getProperty("color_initialization_1"));
-		color_initialization_2 = colors.indexOf(properties_userDefined.getProperty("color_initialization_2"));
-		places_horizontal = Arrays.asList(properties_userDefined.getProperty("places_horizontal").split(","));
+		color_initialization_1 = colors.indexOf(properties.getProperty("color_initialization_1"));
+		color_initialization_2 = colors.indexOf(properties.getProperty("color_initialization_2"));
+		places_horizontal = Arrays.asList(properties.getProperty("places_horizontal").split(","));
 		
-		height_initializingPosition_1 = Float.valueOf(properties_userDefined.getProperty("height_initializingPosition_1"));
-		height_initializingPosition_2 = Float.valueOf(properties_userDefined.getProperty("height_initializingPosition_2"));
-		height_drivingPosition = Float.valueOf(properties_userDefined.getProperty("height_drivingPosition"));
-		height_grippingPosition = Float.valueOf(properties_userDefined.getProperty("height_grippingPosition"));
-		buildingPosition_height = Float.valueOf(properties_userDefined.getProperty("buildingPosition_height"));
-		buildingSite_width = Float.valueOf(properties_userDefined.getProperty("buildingSite_width"));
+		height_initializingPosition_1 = Float.valueOf(properties.getProperty("height_initializingPosition_1"));
+		height_initializingPosition_2 = Float.valueOf(properties.getProperty("height_initializingPosition_2"));
+		height_drivingPosition = Float.valueOf(properties.getProperty("height_drivingPosition"));
+		height_grippingPosition = Float.valueOf(properties.getProperty("height_grippingPosition"));
+		buildingPosition_height = Float.valueOf(properties.getProperty("buildingPosition_height"));
+		buildingSite_width = Float.valueOf(properties.getProperty("buildingSite_width"));
 		
-		ip_host = properties_userDefined.getProperty("ip_host");
-		ip_local_robot_right = properties_userDefined.getProperty("ip_local_robot_right");
-		ip_local_robot_left = properties_userDefined.getProperty("ip_local_robot_left");
-		debug_mode = Boolean.valueOf(properties_userDefined.getProperty("debug_mode"));
+		ip_host = properties.getProperty("ip_host");
+		ip_local_robot_right = properties.getProperty("ip_local_robot_right");
+		ip_local_robot_left = properties.getProperty("ip_local_robot_left");
+		debug_mode = Boolean.valueOf(properties.getProperty("debug_mode"));
 		
-		randomFailureEnabled = Boolean.valueOf(properties_userDefined.getProperty("randomFailureEnabled"));
-		randomFailure_parameter = Integer.valueOf(properties_userDefined.getProperty("randomFailure_parameter"));
+		randomFailureEnabled = Boolean.valueOf(properties.getProperty("randomFailureEnabled"));
+		randomFailure_parameter = Integer.valueOf(properties.getProperty("randomFailure_parameter"));
 		
-		power_motor_horizontal_initialization_1 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization_1"));
-		power_motor_horizontal_initialization_2 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_initialization_2"));
-		power_motor_horizontal_1 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_1"));
-		power_motor_horizontal_2 = Integer.valueOf(properties_userDefined.getProperty("power_motor_horizontal_2"));
-		power_motor_vertical_up = Integer.valueOf(properties_userDefined.getProperty("power_motor_vertical_up"));
-		power_motor_vertical_down = Integer.valueOf(properties_userDefined.getProperty("power_motor_vertical_down"));
-		power_motor_robotHand_open = Integer.valueOf(properties_userDefined.getProperty("power_motor_robotHand_open"));
-		power_motor_robotHand_close = Integer.valueOf(properties_userDefined.getProperty("power_motor_robotHand_close"));
+		power_motor_horizontal_initialization_1 = Integer.valueOf(properties.getProperty("power_motor_horizontal_initialization_1"));
+		power_motor_horizontal_initialization_2 = Integer.valueOf(properties.getProperty("power_motor_horizontal_initialization_2"));
+		power_motor_horizontal_1 = Integer.valueOf(properties.getProperty("power_motor_horizontal_1"));
+		power_motor_horizontal_2 = Integer.valueOf(properties.getProperty("power_motor_horizontal_2"));
+		power_motor_vertical_up = Integer.valueOf(properties.getProperty("power_motor_vertical_up"));
+		power_motor_vertical_down = Integer.valueOf(properties.getProperty("power_motor_vertical_down"));
+		power_motor_robotHand_open = Integer.valueOf(properties.getProperty("power_motor_robotHand_open"));
+		power_motor_robotHand_close = Integer.valueOf(properties.getProperty("power_motor_robotHand_close"));
 		
-		delay_robotHand_close = Integer.valueOf(properties_userDefined.getProperty("delay_robotHand_close"));
-		delay_robotHand_open = Integer.valueOf(properties_userDefined.getProperty("delay_robotHand_open"));
-		delay_restartCommunicationAfterFailure = Integer.valueOf(properties_userDefined.getProperty("delay_restartCommunicationAfterFailure"));
-		delay_initialize = Integer.valueOf(properties_userDefined.getProperty("delay_initialize"));
-		delay_sending = Integer.valueOf(properties_userDefined.getProperty("delay_sending"));
+		delay_robotHand_close = Integer.valueOf(properties.getProperty("delay_robotHand_close"));
+		delay_robotHand_open = Integer.valueOf(properties.getProperty("delay_robotHand_open"));
+		delay_restartCommunicationAfterFailure = Integer.valueOf(properties.getProperty("delay_restartCommunicationAfterFailure"));
+		delay_initialize = Integer.valueOf(properties.getProperty("delay_initialize"));
+		delay_sending = Integer.valueOf(properties.getProperty("delay_sending"));
 	}
 	
 	/**
