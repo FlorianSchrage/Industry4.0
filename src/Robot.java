@@ -22,7 +22,6 @@ import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
 public class Robot {
-	
 	// Statuses:
 	private final String STATUS_INITIALIZING = "INITIALIZING";
 	private final String STATUS_IDLE = "IDLE";
@@ -149,38 +148,14 @@ public class Robot {
 	private ReceiverThread receiver;
 	Semaphore semaphore;
 	
+	
+	
 	public static void main(String[] args) {
 		Sound.setVolume(5);
 		Sound.systemSound(true, 2);
 		
 		Robot robot = new Robot();
 		robot.startWorking();
-	}
-	
-	/**
-	 * Starts robot initialization and sets up and starts a sender and receiver thread.
-	 */
-	public void startWorking()
-	{
-		initializePropertiesBasedVariables();
-		
-		if(getAddress().equals(ip_local_robot_right)){
-			initializeSortRobot();
-		}
-		else if (getAddress().equals(ip_local_robot_left)){
-			initializeBuildRobot();
-		}
-		else{
-			throw new IllegalStateException("Local robot ip does not match an user defined robot ip. Given local ip: " + getAddress());
-		}
-		
-		semaphore = new Semaphore(1);
-		
-		sender = new SenderThread(this, semaphore, delay_initialize, delay_sending);
-		receiver = new ReceiverThread(this, semaphore);
-		
-		sender.start();
-		receiver.start();
 	}
 	
 	// ---------------------- HELPER FUNCTIONS ----------------------
@@ -216,8 +191,8 @@ public class Robot {
 	}
 	
 	/**
-	 * Returns the local host address of the robot
-	 * @return address holds the local host address, e.g. "0.0.0.1"
+	 * Returns the local host address of the robot.
+	 * @return address holds the local host address, e.g. "0.0.0.1".
 	 */
 	private String getAddress(){
 		String address = "";
@@ -233,7 +208,7 @@ public class Robot {
 	 * Returns the current distance between the ultrasonic sensor sensor_distance_horizontal and the bridge border it is pointing at.
 	 * @return the current distance to the bridge border.
 	 */
-	private float getLeftRightDistance(){
+	private float getHorizontalDistance(){
 		provider_distance_horizontal.fetchSample(sample_distance_horizontal, 0);
 		return sample_distance_horizontal[0];
 	}
@@ -242,7 +217,7 @@ public class Robot {
 	 * Returns the current distance between the ultrasonic sensor sensor_distance_upDown and the floor it is pointing at.
 	 * @return the current distance to the floor.
 	 */
-	private float getUpDownDistance(){
+	private float getVerticalDistance(){
 		provider_distance_vertical.fetchSample(sample_distance_vertical, 0);
 		return sample_distance_vertical[0];
 	}
@@ -270,7 +245,7 @@ public class Robot {
 			}
 			currentStatus = STATUS_MOVING_LEFT;
 		}
-		return getLeftRightDistance();
+		return getHorizontalDistance();
 	}
 	
 	/**
@@ -281,7 +256,7 @@ public class Robot {
 		float currentCoord;
 		if(position == "LEFT"){
 			while(true){
-				currentCoord = getLeftRightDistance();
+				currentCoord = getHorizontalDistance();
 				if(Math.round(currentCoord*100 - coord*100) > 0){
 					motor_horizontal.backward();
 					currentStatus = STATUS_MOVING_RIGHT;
@@ -299,7 +274,7 @@ public class Robot {
 		}
 		else if(position == "RIGHT"){
 			while(true){
-				currentCoord = getLeftRightDistance();
+				currentCoord = getHorizontalDistance();
 				if(Math.round(currentCoord*100 - coord*100) > 0){
 					motor_horizontal.forward();
 					currentStatus = STATUS_MOVING_RIGHT;
@@ -324,7 +299,7 @@ public class Robot {
 	private void moveUpDown(float height){
 		float currentCoord;
 		while(true){
-			currentCoord = getUpDownDistance();
+			currentCoord = getVerticalDistance();
 			if(Math.round(currentCoord*100 - height*100) > 0){
 				motor_vertical.setPower(power_motor_vertical_down);
 				motor_vertical.backward();
@@ -358,7 +333,7 @@ public class Robot {
 	/**
 	 * Simulates a random failure.
 	 * The failed robot will stop the communication, move to the out of order place and restarts the communication after waiting for some time.
-	 * A separate thread is used that waits for sender and receiver threads to stop
+	 * A separate thread is used that waits for sender and receiver threads to stop.
 	 */
 	private void simulateFailure(){
 		currentStatus = STATUS_FAILED;
@@ -447,6 +422,32 @@ public class Robot {
 	// ----- Initialization Methods -----
 	
 	/**
+	 * Starts robot initialization and sets up and starts a sender and receiver thread.
+	 */
+	public void startWorking()
+	{
+		initializePropertiesBasedVariables();
+		
+		if(getAddress().equals(ip_local_robot_right)){
+			initializeSortRobot();
+		}
+		else if (getAddress().equals(ip_local_robot_left)){
+			initializeBuildRobot();
+		}
+		else{
+			throw new IllegalStateException("Local robot ip does not match an user defined robot ip. Given local ip: " + getAddress());
+		}
+		
+		semaphore = new Semaphore(1);
+		
+		sender = new SenderThread(this, semaphore, delay_initialize, delay_sending);
+		receiver = new ReceiverThread(this, semaphore);
+		
+		sender.start();
+		receiver.start();
+	}
+	
+	/**
 	 * Initializes variables with information from the properties file.
 	 */
 	private void initializePropertiesBasedVariables(){
@@ -515,7 +516,7 @@ public class Robot {
 		moveToInitializingPosition();
 		release();
 		
-		coords_places_horizontal.put(places_horizontal.get(0), getLeftRightDistance());
+		coords_places_horizontal.put(places_horizontal.get(0), getHorizontalDistance());
 		LCD.drawString(places_horizontal.get(0) + coords_places_horizontal.get(places_horizontal.get(0)), 0, 0);
 		
 		if(id == 1){
@@ -574,7 +575,7 @@ public class Robot {
 		return currentBrickColor;
 	}
 	
-	// ----- Moving Methods: Left/Right -----
+	// ----- Moving Methods: Horizontal -----
 	
 	/**
 	 * Moves to the delivery place.
@@ -631,7 +632,7 @@ public class Robot {
 		moveToCoordinate(coords_places_horizontal.get("storageLocation_" + (storageNumb + 1)));
 	}
 	
-	// ----- Moving Methods: Up/Down -----
+	// ----- Moving Methods: Vertical -----
 	
 	/**
 	 * Moves to the driving position height
@@ -743,27 +744,6 @@ public class Robot {
 			simulateFailure();
 		}
 	}
-	
-//	public Socket getSocket()
-//	{
-//		if(socket == null || socket.isClosed() || !socket.isConnected())
-//		{
-//			LCD.drawString("New Socket created", 1, 1);
-//			
-//			try
-//			{
-//				socket = new Socket(HOST, PORT);
-//			} catch (UnknownHostException e)
-//			{
-//				e.printStackTrace();
-//			} catch (IOException e)
-//			{
-//				e.printStackTrace();
-//			}
-//		}
-//		
-//		return socket;
-//	}
 
 	/**
 	 * Display a message on the robot screen.
