@@ -5,7 +5,9 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
@@ -371,6 +373,34 @@ public class Robot {
 		Sound.playTone(100, 800);
 	}
 
+	private int getMajorityVotedBrickColor(){
+		for(int i=0; i<=100; i++){
+			provider_color_brick.fetchSample(sample_color_brick, i);
+		}
+		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
+		for(int i=0; i<sample_color_brick.length; i++){
+			int currentCandidate = (int)sample_color_brick[i];
+			if(candidates.containsKey(currentCandidate)){
+				candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
+			}
+			else{
+				candidates.put(currentCandidate, 1);
+			}
+		}
+		
+		int maxValue = -1;
+		int colorWithMaxValue = -1;
+		Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
+		while (it.hasNext()) {
+		    Entry<Integer, Integer> entry = it.next();
+		    if(entry.getValue() > maxValue){
+		    	maxValue = entry.getValue();
+		    	colorWithMaxValue = entry.getKey();
+		    }
+		}
+		return colorWithMaxValue;
+	}
+	
 	/**
 	 * Initializes variables with information from the properties file.
 	 */
@@ -554,6 +584,7 @@ public class Robot {
 	 * Moves to its out of order place (outOfOrderPlace_1 if id=1, outOfOrderPlace_2 if id=2)
 	 */
 	public void moveToOOOPlace(){
+		moveToDrivingPosition();
 		moveToCoordinate(coords_places_horizontal.get("outOfOrderPlace_" + id));
 	}
 	
@@ -637,9 +668,9 @@ public class Robot {
 	 * Scans the current brick which is located below the robot hand and sets the color as currentBrickColor.
 	 */
 	public void setCurrentBrickColor(){
-		provider_color_brick.fetchSample(sample_color_brick, 0);
-		if(0 <= (int)sample_color_brick[0] && (int)sample_color_brick[0] <= 13){
-			currentBrickColor = colors.get((int)sample_color_brick[0]);
+		int currentColor = getMajorityVotedBrickColor();
+		if(0 <= currentColor && currentColor <= 13){
+			currentBrickColor = colors.get(currentColor);
 		}
 		else{
 			currentBrickColor = null;
