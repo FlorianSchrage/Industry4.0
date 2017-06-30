@@ -5,9 +5,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
@@ -778,9 +776,9 @@ public class Robot {
 		playSound("COMMUNICATION_RESTART");
 	}
 	
+	// Further methods which were not included:
 	
 /*
-	
 	// Closes the hand and moves the hand down to the ground to press a brick against the ground.
 	public void pressTight(){
 		currentStatus = STATUS_GRABBING;
