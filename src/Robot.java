@@ -131,12 +131,10 @@ public class Robot {
 	private float[] sample_distance_vertical = new float[provider_distance_horizontal.sampleSize()];
 		
 	private final SampleProvider provider_color_brick = sensor_color_brick.getColorIDMode();
-	//private float[] sample_color_brick = new float[provider_color_brick.sampleSize()];
-	private float[] sample_color_brick = new float[20000];
+	private float[] sample_color_brick = new float[provider_color_brick.sampleSize()];
 		
 	private final SampleProvider provider_color_initialize = sensor_color_initialize.getColorIDMode();
-	//private float[] sample_color_initialize = new float[provider_color_initialize.sampleSize()];
-	private float[] sample_color_initialize = new float[20000];
+	private float[] sample_color_initialize = new float[provider_color_initialize.sampleSize()];
 	
 	// Local IPs
 	private String ip_local_robot_right;
@@ -256,13 +254,6 @@ public class Robot {
 	 */
 	private float returnNextPointOfInterestCoord(){
 		float firstColor = getMajorityVotedInitializationColor();
-		if(id == 1){
-			motor_horizontal.setPower(power_motor_horizontal_initialization_1);
-		}
-		else if(id == 2){
-			motor_horizontal.setPower(power_motor_horizontal_initialization_2);
-		}
-		
 		while(true){
 			moveToInitializingPosition();
 			int currentColor = getMajorityVotedInitializationColor();
@@ -382,59 +373,65 @@ public class Robot {
 	}
 
 	private int getMajorityVotedBrickColor(){
-		for(int i=0; i<=1; i++){
-			provider_color_brick.fetchSample(sample_color_brick, i);
-		}
-		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
-		for(int i=0; i<sample_color_brick.length; i++){
-			int currentCandidate = (int)sample_color_brick[i];
-			if(candidates.containsKey(currentCandidate)){
-				candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
-			}
-			else{
-				candidates.put(currentCandidate, 1);
-			}
-		}
+//		for(int i=0; i<=1; i++){
+//			provider_color_brick.fetchSample(sample_color_brick, i);
+//		}
+//		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
+//		for(int i=0; i<sample_color_brick.length; i++){
+//			int currentCandidate = (int)sample_color_brick[i];
+//			if(candidates.containsKey(currentCandidate)){
+//				candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
+//			}
+//			else{
+//				candidates.put(currentCandidate, 1);
+//			}
+//		}
+//		
+//		int maxValue = -1;
+//		int colorWithMaxValue = -1;
+//		Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
+//		while (it.hasNext()) {
+//		    Entry<Integer, Integer> entry = it.next();
+//		    if(entry.getValue() > maxValue){
+//		    	maxValue = entry.getValue();
+//		    	colorWithMaxValue = entry.getKey();
+//		    }
+//		}
 		
-		int maxValue = -1;
-		int colorWithMaxValue = -1;
-		Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
-		while (it.hasNext()) {
-		    Entry<Integer, Integer> entry = it.next();
-		    if(entry.getValue() > maxValue){
-		    	maxValue = entry.getValue();
-		    	colorWithMaxValue = entry.getKey();
-		    }
-		}
-		return colorWithMaxValue;
+		provider_color_brick.fetchSample(sample_color_brick, 0);
+		
+		return (int)sample_color_brick[0];
 	}
 	
 	private int getMajorityVotedInitializationColor(){
-		for(int i=0; i<=1; i++){
-			provider_color_initialize.fetchSample(sample_color_initialize, i);
-		}
-		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
-		for(int i=0; i<sample_color_initialize.length; i++){
-			int currentCandidate = (int)sample_color_initialize[i];
-			if(candidates.containsKey(currentCandidate)){
-				candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
-			}
-			else{
-				candidates.put(currentCandidate, 1);
-			}
-		}
+//		for(int i=0; i<=1; i++){
+//			provider_color_initialize.fetchSample(sample_color_initialize, i);
+//		}
+//		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
+//		for(int i=0; i<sample_color_initialize.length; i++){
+//			int currentCandidate = (int)sample_color_initialize[i];
+//			if(candidates.containsKey(currentCandidate)){
+//				candidates.put(currentCandidate, candidates.get(currentCandidate)+1);
+//			}
+//			else{
+//				candidates.put(currentCandidate, 1);
+//			}
+//		}
+//		
+//		int maxValue = -1;
+//		int colorWithMaxValue = -1;
+//		Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
+//		while (it.hasNext()) {
+//		    Entry<Integer, Integer> entry = it.next();
+//		    if(entry.getValue() > maxValue){
+//		    	maxValue = entry.getValue();
+//		    	colorWithMaxValue = entry.getKey();
+//		    }
+//		}
+//		return colorWithMaxValue;
 		
-		int maxValue = -1;
-		int colorWithMaxValue = -1;
-		Iterator<Entry<Integer, Integer>> it = candidates.entrySet().iterator();
-		while (it.hasNext()) {
-		    Entry<Integer, Integer> entry = it.next();
-		    if(entry.getValue() > maxValue){
-		    	maxValue = entry.getValue();
-		    	colorWithMaxValue = entry.getKey();
-		    }
-		}
-		return colorWithMaxValue;
+		provider_color_initialize.fetchSample(sample_color_initialize, 0);
+		return (int)sample_color_initialize[0];
 	}
 	
 	/**
@@ -485,21 +482,19 @@ public class Robot {
 		
 		coords_places_horizontal.put(places_horizontal.get(0), getLeftRightDistance());
 		LCD.drawString(places_horizontal.get(0) + coords_places_horizontal.get(places_horizontal.get(0)), 0, 0);
-		/*
+		
 		if(id == 1){
 			motor_horizontal.setPower(power_motor_horizontal_initialization_1);
 		}
 		else if(id == 2){
 			motor_horizontal.setPower(power_motor_horizontal_initialization_2);
 		}
-		*/
 		
 		for(int i=1; i<places_horizontal.size()-1; i++){
 			coords_places_horizontal.put(places_horizontal.get(i), returnNextPointOfInterestCoord());
 			LCD.clearDisplay();
 			LCD.drawString(coords_places_horizontal.get(places_horizontal.get(i)) + places_horizontal.get(i), 0, 0);
 		}
-		
 		if(id == 1){
 			motor_horizontal.setPower(power_motor_horizontal_1);
 		}
