@@ -363,6 +363,7 @@ public class Robot {
 	private void simulateFailure(){
 		currentStatus = STATUS_FAILED;
 		FailThread fail = new FailThread(this, sender, receiver, delay_restartCommunicationAfterFailure);
+		fail.setPriority(Thread.MAX_PRIORITY);
 		fail.start();
 		
 		Sound.playTone(100, 800);
@@ -803,7 +804,7 @@ public class Robot {
 		print("Restarting Communication");
 		semaphore = new Semaphore(1);
 		
-		sender = new SenderThread(this, semaphore, delay_initialize, delay_sending);
+		sender = new SenderThread(this, semaphore, 0, delay_sending);
 		receiver = new ReceiverThread(this, semaphore);
 		
 		sender.start();
