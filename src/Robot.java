@@ -375,7 +375,7 @@ public class Robot {
 	}
 
 	private int getMajorityVotedBrickColor(){
-		for(int i=0; i<=100; i++){
+		for(int i=0; i<=1; i++){
 			provider_color_brick.fetchSample(sample_color_brick, i);
 		}
 		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
@@ -403,7 +403,7 @@ public class Robot {
 	}
 	
 	private int getMajorityVotedInitializationColor(){
-		for(int i=0; i<=100; i++){
+		for(int i=0; i<=1; i++){
 			provider_color_initialize.fetchSample(sample_color_initialize, i);
 		}
 		HashMap<Integer, Integer> candidates = new HashMap<Integer, Integer>();
