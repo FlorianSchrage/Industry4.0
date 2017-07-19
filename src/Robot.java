@@ -90,6 +90,8 @@ public class Robot {
 	private float height_initializingPosition_2;
 	private float height_drivingPosition;
 	private float height_grippingPosition;
+	
+	// Building Parameters
 	private float buildingPosition_height;
 	private float buildingSite_width;
 	
@@ -188,6 +190,48 @@ public class Robot {
 	}
 	
 	/**
+	 * Initializes variables with information from the properties file.
+	 */
+	private void initializePropertiesBasedVariables(){
+		readProperties();
+
+		color_initialization_1 = colors.indexOf(properties.getProperty("color_initialization_1"));
+		color_initialization_2 = colors.indexOf(properties.getProperty("color_initialization_2"));
+		places_horizontal = Arrays.asList(properties.getProperty("places_horizontal").split(","));
+		
+		height_initializingPosition_1 = Float.valueOf(properties.getProperty("height_initializingPosition_1"));
+		height_initializingPosition_2 = Float.valueOf(properties.getProperty("height_initializingPosition_2"));
+		height_drivingPosition = Float.valueOf(properties.getProperty("height_drivingPosition"));
+		height_grippingPosition = Float.valueOf(properties.getProperty("height_grippingPosition"));
+		
+		buildingPosition_height = Float.valueOf(properties.getProperty("buildingPosition_height"));
+		buildingSite_width = Float.valueOf(properties.getProperty("buildingSite_width"));
+		
+		ip_host = properties.getProperty("ip_host");
+		ip_local_robot_right = properties.getProperty("ip_local_robot_right");
+		ip_local_robot_left = properties.getProperty("ip_local_robot_left");
+		debug_mode = Boolean.valueOf(properties.getProperty("debug_mode"));
+		
+		randomFailureEnabled = Boolean.valueOf(properties.getProperty("randomFailureEnabled"));
+		randomFailure_parameter = Integer.valueOf(properties.getProperty("randomFailure_parameter"));
+		
+		power_motor_horizontal_initialization_1 = Integer.valueOf(properties.getProperty("power_motor_horizontal_initialization_1"));
+		power_motor_horizontal_initialization_2 = Integer.valueOf(properties.getProperty("power_motor_horizontal_initialization_2"));
+		power_motor_horizontal_1 = Integer.valueOf(properties.getProperty("power_motor_horizontal_1"));
+		power_motor_horizontal_2 = Integer.valueOf(properties.getProperty("power_motor_horizontal_2"));
+		power_motor_vertical_up = Integer.valueOf(properties.getProperty("power_motor_vertical_up"));
+		power_motor_vertical_down = Integer.valueOf(properties.getProperty("power_motor_vertical_down"));
+		power_motor_robotHand_open = Integer.valueOf(properties.getProperty("power_motor_robotHand_open"));
+		power_motor_robotHand_close = Integer.valueOf(properties.getProperty("power_motor_robotHand_close"));
+		
+		delay_robotHand_close = Integer.valueOf(properties.getProperty("delay_robotHand_close"));
+		delay_robotHand_open = Integer.valueOf(properties.getProperty("delay_robotHand_open"));
+		delay_restartCommunicationAfterFailure = Integer.valueOf(properties.getProperty("delay_restartCommunicationAfterFailure"));
+		delay_initialize = Integer.valueOf(properties.getProperty("delay_initialize"));
+		delay_sending = Integer.valueOf(properties.getProperty("delay_sending"));
+	}
+	
+	/**
 	 * Returns the local host address of the robot.
 	 * @return address holds the local host address, e.g. "0.0.0.1".
 	 */
@@ -243,6 +287,38 @@ public class Robot {
 			currentStatus = STATUS_MOVING_LEFT;
 		}
 		return getHorizontalDistance();
+	}
+	
+	/**
+	 * Initializes the horizontal place coordinates by scanning the environment for places.
+	 */
+	private void initializehorizontalPlaceCoordinates(){
+		moveToInitializingPosition();
+		release();
+		
+		coords_places_horizontal.put(places_horizontal.get(0), getHorizontalDistance());
+		LCD.drawString(places_horizontal.get(0) + coords_places_horizontal.get(places_horizontal.get(0)), 0, 0);
+		
+		if(id == 1){
+			motor_horizontal.setPower(power_motor_horizontal_initialization_1);
+		}
+		else if(id == 2){
+			motor_horizontal.setPower(power_motor_horizontal_initialization_2);
+		}
+		
+		for(int i=1; i<places_horizontal.size()-1; i++){
+			coords_places_horizontal.put(places_horizontal.get(i), returnNextPointOfInterestCoord());
+			LCD.clearDisplay();
+			LCD.drawString(coords_places_horizontal.get(places_horizontal.get(i)) + places_horizontal.get(i), 0, 0);
+		}
+		if(id == 1){
+			motor_horizontal.setPower(power_motor_horizontal_1);
+		}
+		else if(id == 2){
+			motor_horizontal.setPower(power_motor_horizontal_2);
+		}
+		moveToDrivingPosition();
+		moveToOOOPlace();
 	}
 	
 	/**
@@ -445,47 +521,6 @@ public class Robot {
 	}
 	
 	/**
-	 * Initializes variables with information from the properties file.
-	 */
-	private void initializePropertiesBasedVariables(){
-		readProperties();
-
-		color_initialization_1 = colors.indexOf(properties.getProperty("color_initialization_1"));
-		color_initialization_2 = colors.indexOf(properties.getProperty("color_initialization_2"));
-		places_horizontal = Arrays.asList(properties.getProperty("places_horizontal").split(","));
-		
-		height_initializingPosition_1 = Float.valueOf(properties.getProperty("height_initializingPosition_1"));
-		height_initializingPosition_2 = Float.valueOf(properties.getProperty("height_initializingPosition_2"));
-		height_drivingPosition = Float.valueOf(properties.getProperty("height_drivingPosition"));
-		height_grippingPosition = Float.valueOf(properties.getProperty("height_grippingPosition"));
-		buildingPosition_height = Float.valueOf(properties.getProperty("buildingPosition_height"));
-		buildingSite_width = Float.valueOf(properties.getProperty("buildingSite_width"));
-		
-		ip_host = properties.getProperty("ip_host");
-		ip_local_robot_right = properties.getProperty("ip_local_robot_right");
-		ip_local_robot_left = properties.getProperty("ip_local_robot_left");
-		debug_mode = Boolean.valueOf(properties.getProperty("debug_mode"));
-		
-		randomFailureEnabled = Boolean.valueOf(properties.getProperty("randomFailureEnabled"));
-		randomFailure_parameter = Integer.valueOf(properties.getProperty("randomFailure_parameter"));
-		
-		power_motor_horizontal_initialization_1 = Integer.valueOf(properties.getProperty("power_motor_horizontal_initialization_1"));
-		power_motor_horizontal_initialization_2 = Integer.valueOf(properties.getProperty("power_motor_horizontal_initialization_2"));
-		power_motor_horizontal_1 = Integer.valueOf(properties.getProperty("power_motor_horizontal_1"));
-		power_motor_horizontal_2 = Integer.valueOf(properties.getProperty("power_motor_horizontal_2"));
-		power_motor_vertical_up = Integer.valueOf(properties.getProperty("power_motor_vertical_up"));
-		power_motor_vertical_down = Integer.valueOf(properties.getProperty("power_motor_vertical_down"));
-		power_motor_robotHand_open = Integer.valueOf(properties.getProperty("power_motor_robotHand_open"));
-		power_motor_robotHand_close = Integer.valueOf(properties.getProperty("power_motor_robotHand_close"));
-		
-		delay_robotHand_close = Integer.valueOf(properties.getProperty("delay_robotHand_close"));
-		delay_robotHand_open = Integer.valueOf(properties.getProperty("delay_robotHand_open"));
-		delay_restartCommunicationAfterFailure = Integer.valueOf(properties.getProperty("delay_restartCommunicationAfterFailure"));
-		delay_initialize = Integer.valueOf(properties.getProperty("delay_initialize"));
-		delay_sending = Integer.valueOf(properties.getProperty("delay_sending"));
-	}
-	
-	/**
 	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the sorting robot.
 	 */
 	public void initializeSortRobot(){
@@ -506,38 +541,6 @@ public class Robot {
 		Collections.reverse(places_horizontal);
 		initializehorizontalPlaceCoordinates();
 		currentStatus = STATUS_IDLE;
-	}
-	
-	/**
-	 * Initializes the horizontal place coordinates by scanning the environment for places.
-	 */
-	private void initializehorizontalPlaceCoordinates(){
-		moveToInitializingPosition();
-		release();
-		
-		coords_places_horizontal.put(places_horizontal.get(0), getHorizontalDistance());
-		LCD.drawString(places_horizontal.get(0) + coords_places_horizontal.get(places_horizontal.get(0)), 0, 0);
-		
-		if(id == 1){
-			motor_horizontal.setPower(power_motor_horizontal_initialization_1);
-		}
-		else if(id == 2){
-			motor_horizontal.setPower(power_motor_horizontal_initialization_2);
-		}
-		
-		for(int i=1; i<places_horizontal.size()-1; i++){
-			coords_places_horizontal.put(places_horizontal.get(i), returnNextPointOfInterestCoord());
-			LCD.clearDisplay();
-			LCD.drawString(coords_places_horizontal.get(places_horizontal.get(i)) + places_horizontal.get(i), 0, 0);
-		}
-		if(id == 1){
-			motor_horizontal.setPower(power_motor_horizontal_1);
-		}
-		else if(id == 2){
-			motor_horizontal.setPower(power_motor_horizontal_2);
-		}
-		moveToDrivingPosition();
-		moveToOOOPlace();
 	}
 	
 	// ----- Getter Methods -----
@@ -652,8 +655,8 @@ public class Robot {
 	 * Moves to the building position height.
 	 * @param height row indicator for the height.
 	 */
-	public void moveToBuildingPosition(float row){
-		moveUpDown((float)(height_grippingPosition + 0.001 + buildingPosition_height * row));
+	public void moveToBuildingPosition(int row){
+		moveUpDown((float)(height_grippingPosition + 0.001 + buildingPosition_height * ((float)row)));
 	}
 	
 	// ----- Robot Hand Methods -----
