@@ -264,8 +264,8 @@ public class Robot {
 	}
 	
 	/**
-	 * Returns the left/right coordinate of the next point of interest.
-	 * Determines the coordinates by checking for red/yellow color changes: Checks the color of the initial position (either yellow or red) and searches for a color change to the other color than the initial color (if initial color is red, then it checks for blue and vice versa)).
+	 * Returns the horizontal coordinate of the next point of interest.
+	 * Determines the coordinates by checking for color changes: Checks the color of the initial position (assuming its either color_initialization_1 or color_initialization_2) and searches for a color change to the other initialization color than the initial color (if initial color is color_initialization_1, then it checks for color_initialization_2 and vice versa).
 	 * @return the horizontal distance of the determined point of interest.
 	 */
 	private float returnNextPointOfInterestCoord(){
@@ -323,7 +323,7 @@ public class Robot {
 	
 	/**
 	 * Moves to the given coordinate.
-	 * @param coord a float which describes the distance between the point of interest and the bridge border that the robot is pointing at.
+	 * @param coord a float which describes the distance between the point of interest it should move to and the bridge border that the robot is pointing at.
 	 */
 	private void moveToCoordinate(float coord){
 		float currentCoord;
@@ -367,7 +367,7 @@ public class Robot {
 	
 	/**
 	 * Moves to the given height.
-	 * @param height a float which describes the distance between the point of interest and the bridge border that the robot is pointing at.
+	 * @param height a float which describes the height from the floor the robot should adjust to.
 	 */
 	private void moveUpDown(float height){
 		float currentCoord;
@@ -405,8 +405,8 @@ public class Robot {
 	
 	/**
 	 * Simulates a random failure.
-	 * The failed robot will stop the communication, move to the out of order place and restarts the communication after waiting for some time.
-	 * A separate thread is used that waits for sender and receiver threads to stop.
+	 * The failed robot will stop the communication, move to the out of order place and restart the communication after waiting for some time.
+	 * A separate thread (FailThread) is used that waits for sender and receiver threads to stop.
 	 */
 	private void simulateFailure(){
 		currentStatus = STATUS_FAILED;
@@ -521,7 +521,7 @@ public class Robot {
 	}
 	
 	/**
-	 * Assigns a unique id and position and scans the environment to initialize the coordinates for the sorting robot.
+	 * Assigns an unique id and position and scans the environment to initialize the coordinates for the sorting robot.
 	 */
 	public void initializeSortRobot(){
 		currentStatus = STATUS_INITIALIZING;
@@ -779,6 +779,8 @@ public class Robot {
 		playSound("COMMUNICATION_RESTART");
 	}
 	
+	
+	
 	// Further methods which were not included:
 	
 /*
@@ -795,7 +797,7 @@ public class Robot {
 		currentStatus = STATUS_IDLE;
 	}
 	
-	// Reads the brick color sensor multiple times and performs a majority vote to determine the correct value.
+	// Reads the brick color sensor multiple times and performs a majority vote to determine the correct value. (Unfortunately, this did not resolve our sensor issues)
 	private int getMajorityVotedBrickColor(){
 	for(int i=0; i<=1; i++){
 		provider_color_brick.fetchSample(sample_color_brick, i);
@@ -824,7 +826,7 @@ public class Robot {
 	return colorWithMaxValue
 }
 	
-	// Reads the initialization color sensor multiple times and performs a majority vote to determine the correct value.
+	// Reads the initialization color sensor multiple times and performs a majority vote to determine the correct value. (Unfortunately, this did not resolve our sensor issues)
 	private int getMajorityVotedInitializationColor(){
 	for(int i=0; i<=1; i++){
 		provider_color_initialize.fetchSample(sample_color_initialize, i);
